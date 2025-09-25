@@ -1,0 +1,3 @@
+(library
+ (name rubiks)
+ (libraries solver cube))

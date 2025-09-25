@@ -1,5 +1,6 @@
-open Rubiks.Rubikscube
-open Rubiks
+(* open Rubiks *)
+open Cube
+open Solver.Cross
 
 let () = print_endline "Hello, World!"
 
@@ -37,7 +38,7 @@ let () =
   Printf.printf "Start\n%s\n" (cube_of_string _scrambled_cube)
 
 
-let moves = Solve.solve_white_cross _scrambled_cube
+let moves = Solver.Cross.solve_white_cross _scrambled_cube
 
 let crossed = apply_moves _scrambled_cube moves
 let () = Printf.printf "Moves to solve white cross: %s\n"

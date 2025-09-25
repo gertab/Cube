@@ -1,4 +1,4 @@
-open Rubikscube
+open Cube
 
 
 (* ---------- Logical face labels (for describing where stickers face) ---------- *)
@@ -11,7 +11,7 @@ type face_label =
   | R_face
   
 (* ---------- Helpers over your cube ---------- *)
-let eq_colour (a:colour) (b:colour) =
+let eq_colour (a: colour) (b:colour) =
   match a,b with
   | White,White | Yellow,Yellow | Red,Red | Orange,Orange | Blue,Blue | Green,Green -> true
   | _ -> false
@@ -132,6 +132,7 @@ let solve_white_cross (c0:cube) : move list =
   let push xs acc = List.rev_append xs acc in
   let rec loop c acc i =
     if i = 4 then List.rev acc
+      (* loops 4 times *)
     else
       let target = center_of c F_face in
       let (w_face, o_face) = find_white_edge_facing c target in
