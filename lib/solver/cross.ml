@@ -66,14 +66,21 @@ let solve_white_cross (c0:cube) : move list =
   let push xs acc = List.rev_append xs acc in
   let rec loop c acc i =
     if i = 4 then List.rev acc
-      (* loops 4 times *)
+      (* loops 4 times due to the 4 white edge pieces *)
     else
+      (* Choose the current target colour: the center on Front *)
       let target = center_of c F_face in
+      (* 1) Find the edge with WHITE and that target colour *)
       let (w_face, o_face) = find_edge_facing c White target in
+      (* 2) Bring it to U with WHITE on U *)
       let seq1 = steps w_face o_face in
       let c1 = apply_moves c seq1 in
+
+      (* 3) Align it to UF (WHITE on U) by spinning U *)
       let (c2, spin) = spin_u_to_uf c1 target in
+      (* 4) Do F2 to insert it into D *)
       let c3 = apply_moves c2 [F; F] in
+      (* 5) Do a Y turn to prepare for the next edge *)
       let c4 = apply_move c3 Y in
       let acc' =
         acc
@@ -88,7 +95,7 @@ let solve_white_cross (c0:cube) : move list =
 
 
 
-(* Optional: checker that the cross is done (white on Down + side matches) *)
+(* Checker that the cross is done (white on Down + side matches) *)
 let cross_solved (c:cube) : bool =
   let c' = orient_cube_with_white_down c in
   (* all down stickers must be white *)

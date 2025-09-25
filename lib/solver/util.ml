@@ -90,15 +90,16 @@ let find_center_facing (c:cube) (target:colour) : face_label =
 
 (* Reorient cube so that white center is Down, returning also the moves used *)
 let orient_cube_with_white_down_with_moves (c:cube) : cube * move list =
-  let white_face = find_center_facing c White
-  in
+  let white_face = find_center_facing c White in
   match white_face with
   | D_face -> (c, [])
-  | U_face -> (apply_move (apply_move c U) U, [U; U]) (* U2 *)
-  | F_face -> (apply_move c F', [F'])
-  | B_face -> (apply_move c B, [B])
-  | L_face -> (apply_move c L', [L'])
-  | R_face -> (apply_move c R, [R])
+  | U_face -> (apply_move (apply_move c X) X, [X; X])         (* X2 *)
+  | F_face -> (apply_move (apply_move (apply_move c X) X) X,  (* X' = X X X *)
+               [X; X; X])
+  | B_face -> (apply_move c X, [X])                           (* X *)
+  | L_face -> (apply_move (apply_move (apply_move c Z) Z) Z,  (* Z' = Z Z Z *)
+               [Z; Z; Z])
+  | R_face -> (apply_move c Z, [Z])                           (* Z *)
 
 (* Reorient cube so that white center is Down *)
 let orient_cube_with_white_down (c:cube) : cube =
