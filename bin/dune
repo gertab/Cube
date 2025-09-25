@@ -1,0 +1,5 @@
+(executable
+ (public_name rubiks)
+ (name main)
+ (libraries rubiks)
+ )
