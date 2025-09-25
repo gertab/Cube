@@ -29,17 +29,22 @@ type cube = {
   down  : face;
 }
 
-let colour_of_string : colour -> string = function 
+let string_of_colour : colour -> string = function 
   | White  -> "W"
   | Yellow -> "Y"
   | Red    -> "R"
   | Orange -> "O"
   | Blue   -> "B"
   | Green  -> "G"
-  
-let cube_of_string (c : cube) : string =
+
+let eq_colour (a: colour) (b:colour) =
+  match a,b with
+  | White,White | Yellow,Yellow | Red,Red | Orange,Orange | Blue,Blue | Green,Green -> true
+  | _ -> false
+
+let string_of_cube (c : cube) : string =
   let string_of_row (a,b,c) =
-    colour_of_string a ^ colour_of_string b ^ colour_of_string c in
+    string_of_colour a ^ string_of_colour b ^ string_of_colour c in
     
   let row_top f    = (f.top_left,    f.top_middle,    f.top_right) in
   let row_middle f = (f.middle_left, f.middle_middle, f.middle_right) in
