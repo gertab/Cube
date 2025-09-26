@@ -1,6 +1,6 @@
 (library
  (name solver)
  (public_name rubiks.solver)
- (libraries cube)
+ (libraries rubiks_cube)
  )
 

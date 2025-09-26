@@ -1,6 +1,6 @@
 (executable
  (public_name rubiks)
  (name main)
- (libraries cube solver)
+ (libraries rubiks_cube solver)
  ; rubiks 
  )

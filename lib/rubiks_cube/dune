@@ -1,0 +1,6 @@
+(library
+ (name rubiks_cube)
+ (public_name rubiks.rubiks_cube)
+ ; (libraries rubiks)
+ )
+

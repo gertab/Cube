@@ -1,6 +1,6 @@
 (* lib/solver/f2l.ml *)
-open Cube
-open Util
+open Rubiks_cube.Cube
+open Rubiks_cube.Util
 
 (* CFOP: solving the First Two Layers (F2L)
    - With the white cross already solved (White on the Down face) and any front color facing you, solve the four corner–edge pairs that belong between the Down layer and the middle layer:

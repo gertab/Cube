@@ -1,18 +1,8 @@
 open Cube
 
-
-(* ---------- Logical face labels (for describing where stickers face) ---------- *)
-type face_label =
-  | U_face
-  | D_face
-  | F_face
-  | B_face
-  | L_face
-  | R_face
-
 let all_faces = [U_face; D_face; F_face; B_face; L_face; R_face]
   
-(* ---------- Helpers over your cube ---------- *)
+(* Helpers over your cube *)
 
 let center_of (c:cube) : face_label -> colour = function
   | F_face -> c.front.middle_middle

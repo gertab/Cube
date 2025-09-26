@@ -1,5 +1,5 @@
-open Cube
-open Util
+open Rubiks_cube.Cube
+open Rubiks_cube.Util
 
 (* CFOP: solving the white cross
 

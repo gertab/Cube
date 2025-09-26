@@ -1,5 +1,5 @@
 (* open Rubiks *)
-open Cube
+open Rubiks_cube.Cube
 (* open Solver.Cross *)
 
 let () = print_endline "Hello, World!"

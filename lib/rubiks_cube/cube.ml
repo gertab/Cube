@@ -29,6 +29,15 @@ type cube = {
   down  : face;
 }
 
+(* Logical face labels (for describing where stickers face) *)
+type face_label =
+  | U_face
+  | D_face
+  | F_face
+  | B_face
+  | L_face
+  | R_face
+
 let string_of_colour : colour -> string = function 
   | White  -> "W"
   | Yellow -> "Y"
@@ -107,7 +116,6 @@ type move =
   | Z (* rotate whole cube like F *)
   | Z'
 
-
 let string_of_move : move -> string = function
   | U  -> "U"
   | U' -> "U'"
@@ -129,12 +137,14 @@ let string_of_move : move -> string = function
   | Z'  -> "Z'"
 
 
-(* Helpers functions *)
 let mk_face tl tm tr ml mm mr bl bm br = {
   top_left = tl; top_middle = tm; top_right = tr;
   middle_left = ml; middle_middle = mm; middle_right = mr;
   bottom_left = bl; bottom_middle = bm; bottom_right = br;
 }
+
+(* Helpers functions for apply_move *)
+
 
 (* Rotate face clockwise *)
 let rotate_face_cw (f: face) : face =
@@ -190,8 +200,6 @@ let mirror_face_twice (f: face) : face =
     f.top_right    f.top_middle    f.top_left
 
 (* A solved cube *)
-
-
 let solved_cube = {
   front = mk_face
     Red Red Red
