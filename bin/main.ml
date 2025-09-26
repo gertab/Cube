@@ -62,6 +62,11 @@ let () = Printf.printf "Moves to solve f2l: %s\n"
 let () =
   Printf.printf "Final\n%s\n" (string_of_cube f2l)
 
+let () = Printf.printf "Is cross solved? %b\n" (Solver.Cross.is_white_cross_solved f2l)
+let () = Printf.printf "Is F2L solved? %b\n" (Solver.F2l.is_f2l_solved f2l)
+
+
+
 
 (* crossed now has the white cross on Down, with side colours matched to their centers *)
 

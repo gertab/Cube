@@ -93,12 +93,11 @@ let solve_white_cross (c0:cube) : move list =
       in
       loop c4 acc' (i + 1)
   in
-  loop c1 m1 0
-
+  minimize_moves (loop c1 m1 0)
 
 
 (* Checker that the cross is done (white on Down + side matches) *)
-let cross_solved (c:cube) : bool =
+let is_white_cross_solved (c:cube) : bool =
   let c' = orient_cube_with_white_down c in
   (* all down stickers must be white *)
   eq_colour (center_of c' D_face) White &&

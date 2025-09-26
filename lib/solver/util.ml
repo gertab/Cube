@@ -14,7 +14,7 @@ let all_faces = [U_face; D_face; F_face; B_face; L_face; R_face]
   
 (* ---------- Helpers over your cube ---------- *)
 
-let center_of (c:cube) = function
+let center_of (c:cube) : face_label -> colour = function
   | F_face -> c.front.middle_middle
   | B_face -> c.back.middle_middle
   | L_face -> c.left.middle_middle
@@ -128,7 +128,6 @@ let all_corners =
     DFR; DRB; DBL; DLF ]
 
 (* The three faces that a corner belongs to, in fixed order *)
-
 let corner_faces = function
   | UFR -> (U_face, F_face, R_face)
   | URB -> (U_face, R_face, B_face)
@@ -175,3 +174,52 @@ let find_corner_facing (c:cube) (col1:colour) (col2:colour) (col3:colour)
     | None -> failwith "colour not found in corner"
   in
   (face_of col1, face_of col2, face_of col3)
+
+
+(* Minimizing moves helper functions *)
+
+(* Invert a single move *)
+let invert = function
+  | U  -> U'  | U' -> U
+  | D  -> D'  | D' -> D
+  | L  -> L'  | L' -> L
+  | R  -> R'  | R' -> R
+  | F  -> F'  | F' -> F
+  | B  -> B'  | B' -> B
+  | X  -> X'  | X' -> X
+  | Y  -> Y'  | Y' -> Y
+  | Z  -> Z'  | Z' -> Z
+
+(* One linear pass with local rules:
+   - m m' (or m' m) -> remove
+   - m m m m -> remove
+   - m m m -> m'
+   (m m stays as-is; no explicit "2" move in the type) *)
+let simplify_once (ms : move list) : move list =
+  let rec step acc = function
+    | [] -> List.rev acc
+    | m :: rest ->
+      match acc with
+      | a3 :: a2 :: a1 :: acc_tail when a1 = m && a2 = m && a3 = m ->
+          (* four in a row -> drop all four *)
+          step acc_tail rest
+      | a2 :: a1 :: acc_tail when a1 = m && a2 = m ->
+          (* three in a row -> replace by inverse *)
+          step (invert m :: acc_tail) rest
+      | a1 :: acc_tail when a1 = invert m ->
+          (* adjacent inverse pair cancels *)
+          step acc_tail rest
+      | _ ->
+          step (m :: acc) rest
+  in
+  step [] ms
+
+(* Move minimizer entry point:
+   Minimizing moves where possible
+   eg: F U U' -> F (adjacent U U' cancels)
+       F U U U U -> F (U U U U cancels)
+       F U U U -> F U' (three U's become U')
+       F U' Y Y Y Y U' U' -> F U (4 Y's cancel, then 3 U' become U) *)
+let rec minimize_moves (ms : move list) : move list =
+  let ms' = simplify_once ms in
+  if ms' = ms then ms else minimize_moves ms'

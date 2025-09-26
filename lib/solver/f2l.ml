@@ -31,7 +31,6 @@ open Util
 *)
 
 let u2 = [U; U]
-let y' = [Y; Y; Y]
 
 (* First Step: (bring the White–Front–Right corner to UFR/DFR) *)
 let first_step_moves (goal_cubie : corner_pos) (white_facing : face_label) : move list =
@@ -112,6 +111,9 @@ let bump_edge_out_if_needed (c:cube) (fcol:colour) (rcol:colour) : cube * move l
 (* https://ruwix.com/the-rubiks-cube/advanced-cfop-fridrich/first-two-layers-f2l/ *)
 (* ------------------------------------------------------------------ *)
 
+let u2 = [U; U]
+
+(* F2L STEPS: (corner facings: F,R,White) × (edge facings: F,R) -> moves *)
 let get_step
     ((cf, cr, cw) : face_label * face_label * face_label)
     ((ef, er)     : face_label * face_label)
@@ -123,8 +125,8 @@ let get_step
       | (U_face, B_face) -> [R; U; R']
       | (F_face, U_face) -> [U'; F'; U; F]
       | (F_face, R_face) -> [U; F'; U; F; U; F'] @ u2 @ [F]
-      | (R_face, F_face) -> [U; F'; U'; F] @ y' @ [U'; F; U; F'] @ y'
-      | (R_face, U_face) -> [R; U'; R'; U] @ y' @ [U; R'; U'; R] @ y'
+      | (R_face, F_face) -> [U; F'; U'; F; Y; U'; F; U; F'; Y']
+      | (R_face, U_face) -> [R; U'; R'; U; Y'; U; R'; U'; R; Y]
       | (B_face, U_face) -> [U; F'] @ u2 @ [F; U; F'] @ u2 @ [F]
       | (L_face, U_face) -> [U; F'; U'; F; U; F'] @ u2 @ [F]
       | (U_face, R_face) -> [U'; R; U'; R'; U; R; U; R']
@@ -139,8 +141,8 @@ let get_step
       | (L_face, U_face) -> [F'; U'; F]
       | (U_face, R_face) -> [U; R; U'; R']
       | (F_face, R_face) -> [U'; R; U'; R'; U'; R] @ u2 @ [R']
-      | (R_face, F_face) -> [U'; R; U; R'] @ y' @ [U; R'; U'; R] @ y'
-      | (U_face, F_face) -> [F'; U; F; U'] @ [Y] @ [U'; F; U; F'] @ y'
+      | (R_face, F_face) -> [U'; R; U; R'; Y'; U; R'; U'; R; Y]
+      | (U_face, F_face) -> [F'; U; F; U'; Y; U'; F; U; F'; Y']
       | (U_face, L_face) -> [U'; R] @ u2 @ [R'; U'; R] @ u2 @ [R']
       | (U_face, B_face) -> [U'; R; U; R'; U'; R] @ u2 @ [R']
       | (F_face, U_face) -> [U; F'; U; F; U'; F'; U'; F]
@@ -160,8 +162,7 @@ let get_step
       | (U_face, L_face) -> [U; F'; U; F; U; R; U'; R']
       | (U_face, B_face) -> [F'; U; F; U; R; U'; R']
       | (U_face, F_face) -> u2 @ [F'; U; F; U; R; U'; R']
-      | (R_face, F_face) ->
-          [R; U'; R'] @ y' @ [U; R'] @ u2 @ [R; U; R'] @ u2 @ [R] @ [Y]
+      | (R_face, F_face) -> [R; U'; R'; Y'; U; R'; U; U; R; U; R'; U; U; R; Y]
       | (F_face, R_face) -> []
       | _ -> []
     end
@@ -176,8 +177,7 @@ let get_step
       | (F_face, R_face) ->
           [R; U'; R'; U; R] @ u2 @ [R'; U; R; U'; R']
       | (R_face, F_face) ->
-          [R; U; R'; U'; R; U'; R'; U] @ y' @
-          [U; R'; U'; R] @ [Y]
+          [R; U; R'; U'; R; U'; R'; U; Y'; U; R'; U'; R; Y]
       | _ -> []
     end
 
@@ -191,8 +191,7 @@ let get_step
       | (F_face, R_face) ->
           [R; U'; R'; U'; R; U; R'; U'; R] @ u2 @ [R']
       | (R_face, F_face) ->
-          [R; U'; R'] @ y' @
-          [U; R'; U'; R; U'; R'; U'; R] @ [Y]
+          [R; U'; R'; Y'; U; R'; U'; R; U'; R'; U'; R; Y]
       | _ -> []
     end
 
@@ -202,9 +201,9 @@ let get_step
       | (F_face, R_face) ->
           [R; U; R'; U'; R; U; R'; U'; R; U; R']
       | (R_face, F_face) ->
-          [R; U'; R'] @ y' @ [U; R'; U; R] @ [Y]
+          [R; U'; R'; Y'; U; R'; U; R; Y]
       | (U_face, F_face) ->
-          [R; U; R'; U';] @ u2 @ [R; U; R'; U'; R; U; R']
+          [R; U; R'; U'] @ u2 @ [R; U; R'; U'; R; U; R']
       | (U_face, L_face) ->
           u2 @ [R; U; R'; U; R; U'; R']
       | (U_face, B_face) ->
@@ -216,7 +215,7 @@ let get_step
       | (B_face, U_face) ->
           u2 @ [F'; U'; F; U'; F'; U; F]
       | (R_face, U_face) ->
-          y' @ [R'; U'; R] @ u2 @ [R'; U'; R; U; R'; U'; R] @ [Y]
+          [Y'; R'; U'; R; U; U; R'; U'; R; U; R'; U'; R; Y]
       | (F_face, U_face) ->
           [F'] @ u2 @ [F; U; F'; U'; F]
       | _ -> []
@@ -225,7 +224,7 @@ let get_step
   | _ -> []
 
 (* ------------------------------------------------------------------ *)
-(* Fix one F2L pair (the full "remaining steps" after first step)         *)
+(* Fix one F2L pair (the full "remaining steps" after first step)     *)
 (* ------------------------------------------------------------------ *)
 
 let f2l_one_pair (c:cube) : cube * move list =
@@ -233,15 +232,15 @@ let f2l_one_pair (c:cube) : cube * move list =
   let front_color = center_of c F_face in
   let right_color = center_of c R_face in
 
-  let () = Printf.printf "Solving F2L pair (%s, %s)\n"
-      (string_of_colour front_color) (string_of_colour right_color) in
+  (* let () = Printf.printf "Solving F2L pair (%s, %s)\n"
+      (string_of_colour front_color) (string_of_colour right_color) in *)
 
   (* Step A: FIRST_STEP for the corner *)
   let corner_pos = find_corner c front_color right_color White in
   let (_f_on, _r_on, w_on) = find_corner_facing c front_color right_color White in
   let ms_first = first_step_moves corner_pos w_on in
-  let () = Printf.printf "  First step moves: %s\n"
-      (String.concat " " (List.map string_of_move ms_first)) in
+  (* let () = Printf.printf "  First step moves: %s\n"
+      (String.concat " " (List.map string_of_move ms_first)) in *)
   let c1 = apply_moves ms_first c in
 
   (* Step B: Edge special-case "bump out" if needed *)
@@ -254,8 +253,8 @@ let f2l_one_pair (c:cube) : cube * move list =
   let corner_facings = find_corner_facing c3 front_color right_color White in
   let edge_facings   = find_edge_facing   c3 front_color right_color in
   let ms_table       = get_step corner_facings edge_facings in
-  let () = Printf.printf "  F2L step moves: %s\n"
-      (String.concat " " (List.map string_of_move ms_table)) in
+  (* let () = Printf.printf "  F2L step moves: %s\n"
+      (String.concat " " (List.map string_of_move ms_table)) in *)
   let c4             = apply_moves ms_table c3 in
 
   (* Step E: rotate Y to move to the next pair *)
@@ -272,10 +271,57 @@ let solve_f2l (c0:cube) : move list =
     failwith "[f2l] cube not oriented with white center on Down face"
   else 
     let rec loop i c acc =
-      Printf.printf "F2L step %d\n%s\n" (i+1) (string_of_cube c);
+      (* Printf.printf "F2L step %d\n%s\n" (i+1) (string_of_cube c); *)
       if i = 4 then acc
       else
         let (c', ms) = f2l_one_pair c in
         loop (i+1) c' (acc @ ms)
     in
-    loop 0 c0 []
+    minimize_moves (loop 0 c0 [])
+
+    
+(* Check if F2L is solved (first two layers complete) *)
+let is_f2l_solved (c : cube) : bool =
+  (* Orient so White center is on Down (uses whole-cube rotations; doesn't scramble) *)
+  let c' = orient_cube_with_white_down c in
+
+  (* Centers for quick comparisons *)
+  let fC = center_of c' F_face
+  and rC = center_of c' R_face
+  and bC = center_of c' B_face
+  and lC = center_of c' L_face in
+
+  (* Corner checks (Down sticker must be White; side stickers match their centers) *)
+  let corner_dfr_ok =
+    c'.down.top_right          = White &&
+    c'.front.bottom_right      = fC    &&
+    c'.right.bottom_left       = rC
+  in
+  let corner_drb_ok =
+    c'.down.bottom_right       = White &&
+    c'.right.bottom_right      = rC    &&
+    c'.back.bottom_left        = bC
+  in
+  let corner_dbl_ok =
+    c'.down.bottom_left        = White &&
+    c'.back.bottom_right       = bC    &&
+    c'.left.bottom_left        = lC
+  in
+  let corner_dlf_ok =
+    c'.down.top_left           = White &&
+    c'.left.bottom_right       = lC    &&
+    c'.front.bottom_left       = fC
+  in
+
+  (* Edge checks (middle layer edges match their two centers) *)
+  let edge_matches pos (fa, fb) =
+    let (a, b) = edge_colours c' pos in
+    (a = fa && b = fb) || (a = fb && b = fa)
+  in
+  let edge_fr_ok = edge_matches FR (fC, rC) in
+  let edge_br_ok = edge_matches BR (bC, rC) in
+  let edge_bl_ok = edge_matches BL (bC, lC) in
+  let edge_fl_ok = edge_matches FL (fC, lC) in
+
+  corner_dfr_ok && corner_drb_ok && corner_dbl_ok && corner_dlf_ok
+  && edge_fr_ok && edge_br_ok && edge_bl_ok && edge_fl_ok
