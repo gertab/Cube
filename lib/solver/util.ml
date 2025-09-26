@@ -77,6 +77,17 @@ let find_edge_facing (c:cube) (target1:colour) (target2:colour) : (face_label * 
   in
   loop all_edges
 
+(* Where is the (a,b) edge now? *)
+let find_edge_pos (c:cube) (a:colour) (b:colour) : edge_pos =
+  let rec loop = function
+    | [] -> failwith "edge not found"
+    | p::ps ->
+      let (x,y) = edge_colours c p in
+      if (eq_colour x a && eq_colour y b) || (eq_colour x b && eq_colour y a)
+      then p else loop ps
+  in
+  loop all_edges
+
 (* Locate the center with the given colour; return its face *)
 let find_center_facing (c:cube) (target:colour) : face_label =
   let rec loop = function
@@ -93,15 +104,74 @@ let orient_cube_with_white_down_with_moves (c:cube) : cube * move list =
   let white_face = find_center_facing c White in
   match white_face with
   | D_face -> (c, [])
-  | U_face -> (apply_move (apply_move c X) X, [X; X])         (* X2 *)
-  | F_face -> (apply_move (apply_move (apply_move c X) X) X,  (* X' = X X X *)
+  | U_face -> (apply_move X (apply_move X c), [X; X])         (* X2 *)
+  | F_face -> (apply_move X' c,  (* X' = X X X *)
                [X; X; X])
-  | B_face -> (apply_move c X, [X])                           (* X *)
-  | L_face -> (apply_move (apply_move (apply_move c Z) Z) Z,  (* Z' = Z Z Z *)
+  | B_face -> (apply_move X c, [X])                           (* X *)
+  | L_face -> (apply_move Z' c,  (* Z' = Z Z Z *)
                [Z; Z; Z])
-  | R_face -> (apply_move c Z, [Z])                           (* Z *)
+  | R_face -> (apply_move Z c, [Z])                           (* Z *)
 
 (* Reorient cube so that white center is Down *)
 let orient_cube_with_white_down (c:cube) : cube =
   orient_cube_with_white_down_with_moves c
   |> fst
+
+
+(* Corner indexing (8 unique corners) *)
+type corner_pos =
+  | UFR | URB | UBL | ULF  (* top layer corners *)
+  | DFR | DRB | DBL | DLF  (* bottom layer corners *)
+
+let all_corners =
+  [ UFR; URB; UBL; ULF;
+    DFR; DRB; DBL; DLF ]
+
+(* The three faces that a corner belongs to, in fixed order *)
+
+let corner_faces = function
+  | UFR -> (U_face, F_face, R_face)
+  | URB -> (U_face, R_face, B_face)
+  | UBL -> (U_face, B_face, L_face)
+  | ULF -> (U_face, L_face, F_face)
+  | DFR -> (D_face, F_face, R_face)
+  | DRB -> (D_face, R_face, B_face)
+  | DBL -> (D_face, B_face, L_face)
+  | DLF -> (D_face, L_face, F_face)
+
+let corner_colours (c:cube) = function
+  | UFR -> (c.up.bottom_right,   c.front.top_right,    c.right.top_left)
+  | URB -> (c.up.top_right,      c.right.top_right,    c.back.top_left)
+  | UBL -> (c.up.top_left,       c.back.top_right,     c.left.top_left)
+  | ULF -> (c.up.bottom_left,    c.left.top_right,     c.front.top_left)
+  | DFR -> (c.down.top_right,    c.front.bottom_right, c.right.bottom_left)
+  | DRB -> (c.down.bottom_right, c.right.bottom_right, c.back.bottom_left)
+  | DBL -> (c.down.bottom_left,  c.back.bottom_right,  c.left.bottom_left)
+  | DLF -> (c.down.top_left,     c.left.bottom_right,  c.front.bottom_left)
+
+let find_corner (c:cube) (a:colour) (b:colour) (d:colour) : corner_pos =
+  let target = [a; b; d] in
+  let same_set xs ys =
+    List.sort compare xs = List.sort compare ys
+  in
+  let rec loop = function
+    | [] -> failwith "corner not found"
+    | pos::rest ->
+        let (x,y,z) = corner_colours c pos in
+        if same_set [x;y;z] target then pos else loop rest
+  in
+  loop all_corners
+
+let find_corner_facing (c:cube) (col1:colour) (col2:colour) (col3:colour)
+  : face_label * face_label * face_label =
+  let pos = find_corner c col1 col2 col3 in
+  let (f1,f2,f3) = corner_faces pos in
+  let (c1,c2,c3) = corner_colours c pos in
+  (* associate each colour with its face *)
+  let pairs = [(c1,f1); (c2,f2); (c3,f3)] in
+  let face_of col =
+    match List.find_opt (fun (c,_) -> c = col) pairs with
+    | Some (_,f) -> f
+    | None -> failwith "colour not found in corner"
+  in
+  (face_of col1, face_of col2, face_of col3)

@@ -101,8 +101,11 @@ type move =
   | B  (* Back clockwise *)
   | B'
   | X (* rotate whole cube like R *)
+  | X'
   | Y (* rotate whole cube like U *)
+  | Y'
   | Z (* rotate whole cube like F *)
+  | Z'
 
 
 let string_of_move : move -> string = function
@@ -119,8 +122,11 @@ let string_of_move : move -> string = function
   | B  -> "B"
   | B' -> "B'"
   | X  -> "X"
+  | X'  -> "X'"
   | Y  -> "Y"
+  | Y'  -> "Y'"
   | Z  -> "Z"
+  | Z'  -> "Z'"
 
 
 (* Helpers functions *)
@@ -215,7 +221,7 @@ let solved_cube = {
 
 
 (* nice to implement -- not obvious with llm/makes precision mistakes *)
-let apply_move (c: cube) (m: move) : cube =
+let rec apply_move (m: move) (c: cube) : cube =
 match m with
   (* ---- U: rotate top face CW; cycle top rows F->L->B->R ---- *)
   | U ->
@@ -395,9 +401,26 @@ match m with
     let front' = rotate_face_cw c.front in
     let back' = rotate_face_ccw c.back in
     { up = up'; right = right'; down = down'; left = left'; front = front'; back = back' }
-
-let apply_moves (c: cube) (ms: move list) : cube =
-  List.fold_left apply_move c ms
+  | X' -> (* inverse of X *)
+    c
+    |> apply_move X
+    |> apply_move X
+    |> apply_move X
+    
+    (* apply_move (apply_move (apply_move c X) X) X *)
+  | Y' -> (* inverse of Y *)
+    c
+    |> apply_move Y
+    |> apply_move Y
+    |> apply_move Y  
+  | Z' -> (* inverse of Z *)
+    c
+    |> apply_move Z
+    |> apply_move Z
+    |> apply_move Z
+let apply_moves (ms: move list) (c: cube) : cube =
+  List.fold_left (fun acc m -> apply_move m acc) c ms
+  (* List.fold_left apply_move ms c *)
 
 
 

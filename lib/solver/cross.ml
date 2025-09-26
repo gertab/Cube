@@ -57,12 +57,14 @@ let rec spin_u_to_uf (c:cube) (target:colour) : cube * move list =
   match w_face, o_face with
   | U_face, F_face -> (c, [])
   | _ ->
-    let c' = apply_move c U in
+    let c' = apply_move U c in
     let (c2, ms) = spin_u_to_uf c' target in
     (c2, U :: ms)
 
 (* Main solver: White Cross (uses real Y turns between sides) *)
+(* assumes that the white is at the bottom *)
 let solve_white_cross (c0:cube) : move list =
+  let c1, m1 = orient_cube_with_white_down_with_moves c0 in
   let push xs acc = List.rev_append xs acc in
   let rec loop c acc i =
     if i = 4 then List.rev acc
@@ -74,14 +76,14 @@ let solve_white_cross (c0:cube) : move list =
       let (w_face, o_face) = find_edge_facing c White target in
       (* 2) Bring it to U with WHITE on U *)
       let seq1 = steps w_face o_face in
-      let c1 = apply_moves c seq1 in
+      let c1 = apply_moves seq1 c in
 
       (* 3) Align it to UF (WHITE on U) by spinning U *)
       let (c2, spin) = spin_u_to_uf c1 target in
       (* 4) Do F2 to insert it into D *)
-      let c3 = apply_moves c2 [F; F] in
+      let c3 = apply_moves [F; F] c2 in
       (* 5) Do a Y turn to prepare for the next edge *)
-      let c4 = apply_move c3 Y in
+      let c4 = apply_move Y c3 in
       let acc' =
         acc
         |> push seq1
@@ -91,7 +93,7 @@ let solve_white_cross (c0:cube) : move list =
       in
       loop c4 acc' (i + 1)
   in
-  loop c0 [] 0
+  loop c1 m1 0
 
 
 

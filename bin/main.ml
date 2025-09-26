@@ -32,7 +32,12 @@ let _cube_1 ={
     White White White;
 } 
 
-let _scrambled_cube = apply_moves _cube_1 [L; L; B; B; L'; F; F; D; B'; F';]
+(* L L B B L' F F D B' F' *)
+(* let _scrambled_cube = apply_moves _cube_1 [L; L; B; B; L'; F; X; F;Y; D; B'; F'] *)
+let _scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
+(* white cross *)
+Z; Z; Z; F; R; U'; R'; F'; U; U; F; F; Y; R; F'; U; F; U; U; U; F; F; Y; L; F; U'; F'; L'; U; F; F; Y; B; L; U'; L'; B'; F; F; Y
+] _cube_1
 
 let () =
   Printf.printf "Start\n%s\n" (string_of_cube _scrambled_cube)
@@ -40,12 +45,22 @@ let () =
 
 let moves = Solver.Cross.solve_white_cross _scrambled_cube
 
-let crossed = apply_moves _scrambled_cube moves
+let crossed = apply_moves moves _scrambled_cube
+
 let () = Printf.printf "Moves to solve white cross: %s\n"
   (String.concat " " (List.map string_of_move moves))
-
 let () =
   Printf.printf "Final\n%s\n" (string_of_cube crossed)
+
+
+let moves_f2l = Solver.F2l.solve_f2l crossed
+let f2l = apply_moves moves_f2l crossed
+
+let () = Printf.printf "Moves to solve f2l: %s\n"
+  (String.concat " " (List.map string_of_move moves_f2l))
+
+let () =
+  Printf.printf "Final\n%s\n" (string_of_cube f2l)
 
 
 (* crossed now has the white cross on Down, with side colours matched to their centers *)
