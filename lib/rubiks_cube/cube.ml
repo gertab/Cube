@@ -429,10 +429,3 @@ match m with
 let apply_moves (ms: move list) (c: cube) : cube =
   List.fold_left (fun acc m -> apply_move m acc) c ms
   (* List.fold_left apply_move ms c *)
-
-
-
-
-
-
-

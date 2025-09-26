@@ -1,8 +1,16 @@
 open Cube
 
-let all_faces = [U_face; D_face; F_face; B_face; L_face; R_face]
-  
-(* Helpers over your cube *)
+let get_scramble (length:int) : move list =
+  let () = Random.self_init () in
+  let common_moves = [R; R'; U; U'; F; F'] in
+  let moves = common_moves @ [U; U'; D; D'; L; L'; R; R'; F; F'; B; B'; X; Y; Z] in
+  let rec loop n acc =
+    if n = 0 then List.rev acc
+    else
+      let m = List.nth moves (Random.int (List.length moves)) in
+      loop (n-1) (m :: acc)
+  in
+  loop length []
 
 let center_of (c:cube) : face_label -> colour = function
   | F_face -> c.front.middle_middle
@@ -11,6 +19,8 @@ let center_of (c:cube) : face_label -> colour = function
   | R_face -> c.right.middle_middle
   | U_face -> c.up.middle_middle
   | D_face -> c.down.middle_middle
+
+let all_faces = [U_face; D_face; F_face; B_face; L_face; R_face]
 
 (* Edge indexing (12 unique edges) *)
 type edge_pos = 
@@ -213,3 +223,30 @@ let simplify_once (ms : move list) : move list =
 let rec minimize_moves (ms : move list) : move list =
   let ms' = simplify_once ms in
   if ms' = ms then ms else minimize_moves ms'
+
+(* Get all 9 stickers of a face *)
+let stickers_of_face (c:cube) = function
+  | F_face -> [c.front.top_left; c.front.top_middle; c.front.top_right;
+               c.front.middle_left; c.front.middle_middle; c.front.middle_right;
+               c.front.bottom_left; c.front.bottom_middle; c.front.bottom_right]
+  | B_face -> [c.back.top_left; c.back.top_middle; c.back.top_right;
+               c.back.middle_left; c.back.middle_middle; c.back.middle_right;
+               c.back.bottom_left; c.back.bottom_middle; c.back.bottom_right]
+  | L_face -> [c.left.top_left; c.left.top_middle; c.left.top_right;
+               c.left.middle_left; c.left.middle_middle; c.left.middle_right;
+               c.left.bottom_left; c.left.bottom_middle; c.left.bottom_right]
+  | R_face -> [c.right.top_left; c.right.top_middle; c.right.top_right;
+               c.right.middle_left; c.right.middle_middle; c.right.middle_right;
+               c.right.bottom_left; c.right.bottom_middle; c.right.bottom_right]
+  | U_face -> [c.up.top_left; c.up.top_middle; c.up.top_right;
+               c.up.middle_left; c.up.middle_middle; c.up.middle_right;
+               c.up.bottom_left; c.up.bottom_middle; c.up.bottom_right]
+  | D_face -> [c.down.top_left; c.down.top_middle; c.down.top_right;
+               c.down.middle_left; c.down.middle_middle; c.down.middle_right;
+               c.down.bottom_left; c.down.bottom_middle; c.down.bottom_right]
+
+let is_solved (c:cube) : bool =
+  List.for_all (fun f ->
+    let center = center_of c f in
+    List.for_all ((=) center) (stickers_of_face c f)
+  ) all_faces

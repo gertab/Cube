@@ -1,4 +1,3 @@
-(* lib/solver/f2l.ml *)
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
 
@@ -162,7 +161,7 @@ let get_step
       | (U_face, L_face) -> [U; F'; U; F; U; R; U'; R']
       | (U_face, B_face) -> [F'; U; F; U; R; U'; R']
       | (U_face, F_face) -> u2 @ [F'; U; F; U; R; U'; R']
-      | (R_face, F_face) -> [R; U'; R'; Y'; U; R'; U; U; R; U; R'; U; U; R; Y]
+      | (R_face, F_face) -> [R; U'; R'; Y'; U; R'] @ u2 @ [R; U; R'] @ u2 @ [R; Y]
       | (F_face, R_face) -> []
       | _ -> []
     end
@@ -170,54 +169,36 @@ let get_step
   (* -------------------- 'DFR' -------------------- *)
   | (D_face, F_face, R_face) -> begin
       match (ef, er) with
-      | (F_face, U_face) ->
-          [F'; U; F; U'; F'; U; F]
-      | (U_face, R_face) ->
-          [R; U; R'; U'; R; U; R']
-      | (F_face, R_face) ->
-          [R; U'; R'; U; R] @ u2 @ [R'; U; R; U'; R']
-      | (R_face, F_face) ->
-          [R; U; R'; U'; R; U'; R'; U; Y'; U; R'; U'; R; Y]
+      | (F_face, U_face) -> [F'; U; F; U'; F'; U; F]
+      | (U_face, R_face) -> [R; U; R'; U'; R; U; R']
+      | (F_face, R_face) -> [R; U'; R'; U; R] @ u2 @ [R'; U; R; U'; R']
+      | (R_face, F_face) -> [R; U; R'; U'; R; U'; R'; U; Y'; U; R'; U'; R; Y]
       | _ -> []
     end
 
   (* -------------------- 'RDF' -------------------- *)
   | (R_face, D_face, F_face) -> begin
-      match (ef, er) with
-      | (F_face, U_face) ->
-          [F'; U'; F; U; F'; U'; F]
-      | (U_face, R_face) ->
-          [R; U'; R'; U; R; U'; R']
-      | (F_face, R_face) ->
-          [R; U'; R'; U'; R; U; R'; U'; R] @ u2 @ [R']
-      | (R_face, F_face) ->
-          [R; U'; R'; Y'; U; R'; U'; R; U'; R'; U'; R; Y]
+    match (ef, er) with
+      | (F_face, U_face) -> [F'; U'; F; U; F'; U'; F]
+      | (U_face, R_face) -> [R; U'; R'; U; R; U'; R']
+      | (F_face, R_face) -> [R; U'; R'; U'; R; U; R'; U'; R] @ u2 @ [R']
+      | (R_face, F_face) -> [R; U'; R'; Y'; U; R'; U'; R; U'; R'; U'; R; Y]
       | _ -> []
     end
 
   (* -------------------- 'RFU' -------------------- *)
   | (R_face, F_face, U_face) -> begin
       match (ef, er) with
-      | (F_face, R_face) ->
-          [R; U; R'; U'; R; U; R'; U'; R; U; R']
-      | (R_face, F_face) ->
-          [R; U'; R'; Y'; U; R'; U; R; Y]
-      | (U_face, F_face) ->
-          [R; U; R'; U'] @ u2 @ [R; U; R'; U'; R; U; R']
-      | (U_face, L_face) ->
-          u2 @ [R; U; R'; U; R; U'; R']
-      | (U_face, B_face) ->
-          [U; R] @ u2 @ [R'; U; R; U'; R']
-      | (U_face, R_face) ->
-          [R] @ u2 @ [R'; U'; R; U; R']
-      | (L_face, U_face) ->
-          [U'; F'] @ u2 @ [F; U'; F'; U; F]
-      | (B_face, U_face) ->
-          u2 @ [F'; U'; F; U'; F'; U; F]
-      | (R_face, U_face) ->
-          [Y'; R'; U'; R; U; U; R'; U'; R; U; R'; U'; R; Y]
-      | (F_face, U_face) ->
-          [F'] @ u2 @ [F; U; F'; U'; F]
+      | (F_face, R_face) -> [R; U; R'; U'; R; U; R'; U'; R; U; R']
+      | (R_face, F_face) -> [R; U'; R'; Y'; U; R'; U; R; Y]
+      | (U_face, F_face) -> [R; U; R'; U'; U'; R; U; R'; U'; R; U; R'] 
+      | (U_face, L_face) -> u2 @ [R; U; R'; U; R; U'; R']
+      | (U_face, B_face) -> [U; R] @ u2 @ [R'; U; R; U'; R']
+      | (U_face, R_face) -> [R] @ u2 @ [R'; U'; R; U; R']
+      | (L_face, U_face) -> [U'; F'] @ u2 @ [F; U'; F'; U; F]
+      | (B_face, U_face) -> u2 @ [F'; U'; F; U'; F'; U; F]
+      | (R_face, U_face) -> [Y'; R'; U'; R; U; U; R'; U'; R; U; R'; U'; R; Y]
+      | (F_face, U_face) -> [F'] @ u2 @ [F; U; F'; U'; F]
       | _ -> []
     end
 
@@ -264,22 +245,8 @@ let f2l_one_pair (c:cube) : cube * move list =
   in
   (c5, ms_total)
 
-(* Solve all 4 F2L pairs *)
-let solve_f2l (c0:cube) : move list =
-  let is_white_center_down = eq_colour (center_of c0 D_face) White in
-  if not is_white_center_down then
-    failwith "[f2l] cube not oriented with white center on Down face"
-  else 
-    let rec loop i c acc =
-      (* Printf.printf "F2L step %d\n%s\n" (i+1) (string_of_cube c); *)
-      if i = 4 then acc
-      else
-        let (c', ms) = f2l_one_pair c in
-        loop (i+1) c' (acc @ ms)
-    in
-    minimize_moves (loop 0 c0 [])
 
-    
+
 (* Check if F2L is solved (first two layers complete) *)
 let is_f2l_solved (c : cube) : bool =
   (* Orient so White center is on Down (uses whole-cube rotations; doesn't scramble) *)
@@ -325,3 +292,25 @@ let is_f2l_solved (c : cube) : bool =
 
   corner_dfr_ok && corner_drb_ok && corner_dbl_ok && corner_dlf_ok
   && edge_fr_ok && edge_br_ok && edge_bl_ok && edge_fl_ok
+
+
+(* Solve all 4 F2L pairs *)
+let solve_f2l (c0:cube) : move list =
+  let is_white_center_down = eq_colour (center_of c0 D_face) White in
+  if not (Cross.is_white_cross_solved c0) then
+    failwith "[f2l] cube does not have white cross solved"
+  else if not is_white_center_down then
+    failwith "[f2l] cube not oriented with white center on Down face"
+  else if is_f2l_solved c0 then
+    []  (* already solved *)
+  else 
+    let rec loop i c acc =
+      (* Printf.printf "F2L step %d\n%s\n" (i+1) (string_of_cube c); *)
+      if i = 4 then acc
+      else
+        let (c', ms) = f2l_one_pair c in
+        loop (i+1) c' (acc @ ms)
+    in
+    minimize_moves (loop 0 c0 [])
+
+    
