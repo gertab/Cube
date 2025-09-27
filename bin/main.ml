@@ -1,8 +1,6 @@
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
 
-let () = print_endline "Hello, World!"
-
 let _cube_1 ={
   front = mk_face
     Red Red Red
@@ -32,25 +30,26 @@ let _cube_1 ={
 
 
 
-(* let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F'] *)
-let scramble_moves = [R; U; U; Y]
+(* let scramble_moves = [R; U; U; Y] *)
+let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F']
 (* let scramble_moves =  invert_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X] *)
 
-let _scrambled_cube = apply_moves scramble_moves _cube_1
-(* let _scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
+(* apply scramble *)
+let scrambled_cube = apply_moves scramble_moves _cube_1
+(* let scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
 (* white cross *)
 (* Z; Z; Z; F; R; U'; R'; F'; U; U; F; F; Y; R; F'; U; F; U; U; U; F; F; Y; L; F; U'; F'; L'; U; F; F; Y; B; L; U'; L'; B'; F; F; Y *)
 ] _cube_1 *)
 
 let () =
-  (* Printf.printf "Start\n%s\n" (string_of_cube _scrambled_cube); *)
+  (* Printf.printf "Start\n%s\n" (string_of_cube scrambled_cube); *)
   Printf.printf "Scramble moves: %s\n"
     (String.concat " " (List.map string_of_move scramble_moves))
 
 
-let moves = Solver.Cross.solve_white_cross _scrambled_cube
+let moves = Solver.Cross.solve_white_cross scrambled_cube
 
-let crossed = apply_moves moves _scrambled_cube
+let crossed = apply_moves moves scrambled_cube
 
 let () = Printf.printf "Moves to solve white cross: %s\n"
   (String.concat " " (List.map string_of_move moves))
