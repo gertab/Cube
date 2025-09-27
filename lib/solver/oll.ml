@@ -1,6 +1,21 @@
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
 
+(* CFOP: solving the OLL (Orientation of the Last Layer)
+
+   - Assumes F2L is complete and the cube is oriented with the white center on D.
+   - Goal: orient all last-layer stickers so the entire U face is Yellow
+           (permutation is ignored; that is done in PLL).
+   - Implementation:
+       * Pattern -> algorithm lookup (subset of the 57 OLL cases used here).
+       * Pattern is a 9-char signature over the U layer:
+           order = BLU, BU, BRU, LU, U, RU, FLU, FU, FRU
+           each char = facing of the Yellow sticker at that slot (L/B/R/F/U/D).
+   - Search strategy:
+       * If current orientation isn't in the table, rotate the cube with Y up to 3 times.
+       * On a match, apply the corresponding algorithm and include any Y rotations used.
+*)
+
 let u2 = [U; U]
 let r2 = [R; R]
 let x2 = [X; X]
@@ -61,7 +76,8 @@ let get_orientations (c0:cube) : string =
   String.init 9 (Array.get chars)
 
 (* OLL algorithms
-   alg_of_pattern returns native move lists (empty list if unknown) *)
+   alg_of_pattern returns native move lists (empty list if unknown) 
+   [p] contains the orientation of the yellow stickers on the top *)
 let steps_oll (p:string) : move list =
   match p with
   | "LBRLURLFR" -> [R; U; B'; X'; R; U] @ x2 @ r2 @ [X'; U'; R'; F; R; F']
@@ -111,7 +127,7 @@ let steps_oll (p:string) : move list =
   | "BBRUUUUFF" -> [L; F'; L'; U'; L; F; L'; Y'; R'; U; R]
   | "BBRUUULFU" -> [L'; B'; L; R'; U'; R; U; L'; B; L]
   | "LBBUUUUFR" -> [R; B; R'; L; U; L'; U'; R; B'; R']
-  | "UURUURUFR" -> [F; U; R; U'; R'; F]
+  | "UURUURUFR" -> [F; U; R; U'; R'; F']
   | "BUULUUFFU" -> [R'; Y; U'; L; Y'; U; R; U'; R'; F'; R]
   | "UUBUURUFF" -> [L; Y'; U; R'; Y; U'; L'; U; L; F; L']
   | "LUULUULFU" -> [F'; U'; L'; U; L; F]

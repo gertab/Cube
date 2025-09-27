@@ -1,2 +1,11 @@
 (test
- (name test_rubiks))
+ (name test_rubiks)
+ (libraries rubiks_cube solver ounit2))
+
+(test
+ (name test_oll)
+ (libraries rubiks_cube solver ounit2))
+
+(test
+ (name test_pll)
+ (libraries rubiks_cube solver ounit2))

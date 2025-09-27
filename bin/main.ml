@@ -33,14 +33,16 @@ let _cube_1 ={
 
 
 (* L L B B L' F F D B' F' *)
-(* let scramble_moves = [F; U; F] *)
-(* let scramble_moves = get_scramble 3 *)
-let scramble_moves = [
+let scramble_moves =  inverse_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X]
+(* let inverse_scramble = inverse_moves scramble_moves *)
+
+(* let scramble_moves = get_scramble 20 *)
+(* let scramble_moves = [
 F'; U'; B';
 F'; U; F; U'; F; F; Y; Y; F'; U; F; U'; F; F; Y; Y;
 U; U; L'; U'; L; R; U; U; R'; U'; R; U; U; R'; Y; U'; R; U; R'; U; R; U; R'; Y; U'; R; U'; R'; U'; F'; U; F; Y; U; U; R; U'; R'; Y'; U; R'; U; R; Y; Y;
 Y; L; F; R'; F; R; F; F; L'
-]
+] *)
 
 let _scrambled_cube = apply_moves scramble_moves _cube_1
 (* let _scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
@@ -74,6 +76,8 @@ let moves_oll = Solver.Oll.solve_oll f2l
 let oll = apply_moves moves_oll f2l
 let () = Printf.printf "Moves to solve oll: %s\n"
   (String.concat " " (List.map string_of_move moves_oll))
+(* let () = Printf.printf "Oll solved\n%s\n" (string_of_cube oll) *)
+
 
 let moves_pll = Solver.Pll.solve_pll oll
 let pll = apply_moves moves_pll oll

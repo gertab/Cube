@@ -228,10 +228,10 @@ let solved_cube = {
 } 
 
 
-(* nice to implement -- not obvious with llm/makes precision mistakes *)
+(* nice to implement *)
 let rec apply_move (m: move) (c: cube) : cube =
 match m with
-  (* ---- U: rotate top face CW; cycle top rows F->L->B->R ---- *)
+  (* U: rotate top face CW; cycle top rows F->L->B->R *)
   | U ->
     let up' = rotate_face_cw c.up in
     let f_top = top_row c.front
@@ -244,7 +244,7 @@ match m with
     let left'  = set_top_row c.left  f_top in
     { c with up = up'; front = front'; right = right'; back = back'; left = left' }
 
-  (* ---- U': rotate top face CCW; cycle top rows F->R->B->L ---- *)
+  (* U': rotate top face CCW; cycle top rows F->R->B->L *)
   | U' ->
     let up' = rotate_face_ccw c.up in
     let f_top = top_row c.front
@@ -257,7 +257,7 @@ match m with
     let left'  = set_top_row c.left  b_top in
     { c with up = up'; front = front'; right = right'; back = back'; left = left' }
 
-  (* ---- D: rotate bottom face CW; cycle bottom rows F->R->B->L ---- *)
+  (* D: rotate bottom face CW; cycle bottom rows F->R->B->L *)
   | D ->
     let down' = rotate_face_cw c.down in
     let f_bot = bot_row c.front
@@ -270,7 +270,7 @@ match m with
     let right' = set_bot_row c.right f_bot in
     { c with down = down'; front = front'; left = left'; back = back'; right = right' }
 
-  (* ---- D': rotate bottom face CCW; inverse cycle F->L->B->R ---- *)
+  (* D': rotate bottom face CCW; inverse cycle F->L->B->R *)
   | D' ->
     let down' = rotate_face_ccw c.down in
     let f_bot = bot_row c.front
@@ -282,7 +282,7 @@ match m with
     let back'  = set_bot_row c.back  l_bot in
     let right' = set_bot_row c.right b_bot in
     { c with down = down'; front = front'; left = left'; back = back'; right = right' }
-      (* ---- L: rotate left face CW; cycle left columns F<-B<-D<-U ---- *)
+      (* L: rotate left face CW; cycle left columns F<-B<-D<-U *)
   | L ->
     let left' = rotate_face_cw c.left in
     let u_l = left_col c.up
@@ -295,7 +295,7 @@ match m with
     let up'    = set_left_col  c.up    (rev3 b_l) in
     { c with left = left'; front = front'; back = back'; down = down'; up = up' }
 
-  (* ---- L': inverse: left columns F<-U<-D<-B ---- *)
+  (* L': inverse: left columns F<-U<-D<-B *)
   | L' ->
     let left' = rotate_face_ccw c.left in
     let u_l = left_col c.up
@@ -308,7 +308,7 @@ match m with
     let back'   = set_right_col  c.back   (rev3 u_l) in
     { c with left = left'; front = front'; up = up'; down = down'; back = back' }
 
-  (* ---- R: rotate right face CW; cycle right columns ---- *)
+  (* R: rotate right face CW; cycle right columns *)
   | R ->
     let right' = rotate_face_cw c.right in
     let u_r = right_col c.up
@@ -321,7 +321,7 @@ match m with
     let up'    = set_right_col c.up    f_r in
     { c with right = right'; front = front'; back = back'; down = down'; up = up' }
 
-  (* ---- R': inverse of R---- *)
+  (* R': inverse of  *)
   | R' ->
     let right' = rotate_face_ccw c.right in
     let u_r = right_col c.up
@@ -334,7 +334,7 @@ match m with
     let back'   = set_left_col c.back   (rev3 d_r) in
     { c with right = right'; front = front'; up = up'; down = down'; back = back' }
 
-  (* ---- F: rotate front face CW ---- *)
+  (* F: rotate front face CW *)
   | F ->
     let front' = rotate_face_cw c.front in
     let u_b = bot_row  c.up
@@ -347,7 +347,7 @@ match m with
     let right'  = set_left_col  c.right  u_b in
     { c with front = front'; up = up'; left = left'; down = down'; right = right' }
 
-  (* ---- F': inverse of F ---- *)
+  (* F': inverse of F *)
   | F' ->
     let front' = rotate_face_ccw c.front in
     let u_b = bot_row  c.up
@@ -360,7 +360,7 @@ match m with
     let left'   = set_right_col c.left   (rev3 u_b) in
     { c with front = front'; up = up'; right = right'; down = down'; left = left' }
 
-  (* ---- B: rotate back face CW ---- *)
+  (* B: rotate back face CW *)
   | B ->
     let back' = rotate_face_cw c.back in
     let u_t = top_row   c.up
@@ -373,7 +373,7 @@ match m with
     let left'   = set_left_col  c.left   (rev3 u_t) in
     { c with back = back'; up = up'; right = right'; down = down'; left = left' }
 
-  (* ---- B': inverse: U.top<-L.left<-D.down<-R.right ---- *)
+  (* B': inverse: U.top<-L.left<-D.down<-R.right *)
   | B' ->
     let back' = rotate_face_ccw c.back in
     let u_t = top_row   c.up 

@@ -12,6 +12,20 @@ let get_scramble (length:int) : move list =
   in
   loop length []
 
+let inverse_moves (ms:move list) : move list =
+  let inv m = match m with
+    | U -> U' | U' -> U
+    | D -> D' | D' -> D
+    | F -> F' | F' -> F
+    | B -> B' | B' -> B
+    | L -> L' | L' -> L
+    | R -> R' | R' -> R
+    | X -> X' | X' -> X
+    | Y -> Y' | Y' -> Y
+    | Z -> Z' | Z' -> Z
+  in
+  List.rev (List.map inv ms)
+
 let center_of (c:cube) : face_label -> colour = function
   | F_face -> c.front.middle_middle
   | B_face -> c.back.middle_middle

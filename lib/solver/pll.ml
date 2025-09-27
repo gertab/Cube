@@ -1,6 +1,19 @@
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
 
+(* CFOP: solving the PLL (Permutation of the Last Layer)
+
+   - assumes OLL is already solved (all stickers on the U face are yellow)
+   - PLL permutes last-layer corners and edges to complete the cube
+   - implemented with a pattern -> algorithm lookup table (21 PLL cases)
+   - pattern is represented as a list of integers [0..8] describing the U-layer cubies’ permutation
+   - search strategy:
+       * orient cube with white center on D
+       * spin U and Y to align with a known pattern (try up to 4 U and 4 Y)
+       * apply the corresponding PLL algorithm
+       * include the U/Y rotations used during search in the final move list
+*)
+
 let u2 = [U; U]
 let d2 = [D; D]
 let m  = [X'; R; L']     (* M  = X' R L' *)
@@ -69,31 +82,31 @@ let pll_signature (c0:cube) : int list =
       | WantCenter -> 4)
     desired_slots
 
-let steps_pll (p:int list) : move list =
+let steps_pll (p:int list) : move list * bool =
   match p with
-  | [8;1;0;3;4;5;6;7;2] -> [X; R'; U; R'] @ d2 @ [R; U'; R'] @ d2 @ [R; R; X']
-  | [0;1;8;3;4;5;2;7;6] -> [X'; R; U'; R] @ d2 @ [R'; U; R] @ d2 @ [R; R; X]
-  | [0;1;2;7;4;3;6;5;8] -> [R; R; U; R; U; R'; U'; R'; U'; R'; U; R']
-  | [0;1;2;5;4;7;6;3;8] -> [R; U'; R; U; R; U; R; U'; R'; U'; R; R]
-  | [0;7;2;5;4;3;6;1;8] -> m2 @ [U] @ m2 @ u2 @ m2 @ [U] @ m2
-  | [0;1;8;5;4;3;6;7;2] -> [R; U; R'; U'; R'; F; R; R; U'; R'; U'; R; U; R'; F']
-  | [2;3;0;1;4;5;6;7;8] -> [R'; U; L'; U; U; R; U'; R'; U; U; R; L; U']
-  | [0;1;8;3;4;7;6;5;2] -> [R; U; R'; F'; R; U; R'; U'; R'; F; R; R; U'; R'; U']
-  | [2;1;0;7;4;5;6;3;8] -> [L; U; U; L'; U; U; L; F'; L'; U'; L; U; L; F; L; L; U]
-  | [2;1;0;3;4;7;6;5;8] -> [R'; U; U; R; U; U; R'; F; R; U; R'; U'; R'; F'; R; R; U']
-  | [8;5;2;3;4;1;6;7;0] -> [R'; U; R'; Y; U'; R'; F'; R; R; U'; R'; U; R'; F; R; F]
-  | [6;5;0;1;4;3;2;7;8] -> [R; R; Y; D; R'; U; R'; U'; R; Y'; D'; R; R; Y'; R'; U; R]
-  | [8;3;2;7;4;5;0;1;6] -> [R'; U'; R; Y; R; R; Y; D; R'; U; R; U'; R; Y'; D'; R; R]
-  | [8;1;2;7;4;3;0;5;6] -> [R; R; Y'; D'; R; U'; R; U; R'; Y; D; R; R; Y; R; U'; R']
-  | [6;7;0;1;4;5;2;3;8] -> [R; U; R'; Y'; R; R; Y'; D'; R; U'; R'; U; R'; Y; D; R; R]
-(* [R'; U2; R'; Y; U'; R'; F'; R2; U'; R'; U; R'; F; R; U'; F], *)
-  | [0;1;2;5;4;3;8;7;6] -> [R'; U; U; R'; Y; U'; R'; F'; R; R; U'; R'; U; R'; F; R; U'; F]
-  | [0;3;2;1;4;7;6;5;8] -> m2 @ [U] @ m2 @ [U] @ m' @ u2 @ m2 @ u2 @ m' @ u2
-  | [8;3;2;1;4;5;6;7;0] -> [F; R; U'; R'; U'; R; U; R'; F'; R; U; R'; U'; R'; F; R; F']
-  | [8;7;2;3;4;5;6;1;0] -> [L; U'; R; U; U; L'; U; R'; L; U'; R; U; U; L'; U; R'; U]
-  | [0;7;6;3;4;5;2;1;8] -> [R'; U; L'; U; U; R; U'; L; R'; U; L'; U; U; R; U'; L; U']
-  | [6;1;8;3;4;5;0;7;2] -> [X'; R; U'; R'; D; R; U; R'; D'; R; U; R'; D; R; U'; R'; D'; X]
-  | _ -> []
+  | [0;1;2;3;4;5;6;7;8] -> [], true
+  | [8;1;0;3;4;5;6;7;2] -> [X; R'; U; R'] @ d2 @ [R; U'; R'] @ d2 @ [R; R; X'], true
+  | [0;1;8;3;4;5;2;7;6] -> [X'; R; U'; R] @ d2 @ [R'; U; R] @ d2 @ [R; R; X], true
+  | [0;1;2;7;4;3;6;5;8] -> [R; R; U; R; U; R'; U'; R'; U'; R'; U; R'], true
+  | [0;1;2;5;4;7;6;3;8] -> [R; U'; R; U; R; U; R; U'; R'; U'; R; R], true
+  | [0;7;2;5;4;3;6;1;8] -> m2 @ [U] @ m2 @ u2 @ m2 @ [U] @ m2, true
+  | [0;1;8;5;4;3;6;7;2] -> [R; U; R'; U'; R'; F; R; R; U'; R'; U'; R; U; R'; F'], true
+  | [2;3;0;1;4;5;6;7;8] -> [R'; U; L'; U; U; R; U'; R'; U; U; R; L; U'], true
+  | [0;1;8;3;4;7;6;5;2] -> [R; U; R'; F'; R; U; R'; U'; R'; F; R; R; U'; R'; U'], true
+  | [2;1;0;7;4;5;6;3;8] -> [L; U; U; L'; U; U; L; F'; L'; U'; L; U; L; F; L; L; U], true
+  | [2;1;0;3;4;7;6;5;8] -> [R'; U; U; R; U; U; R'; F; R; U; R'; U'; R'; F'; R; R; U'], true
+  | [8;5;2;3;4;1;6;7;0] -> [R'; U; R'; Y; U'; R'; F'; R; R; U'; R'; U; R'; F; R; F], true
+  | [6;5;0;1;4;3;2;7;8] -> [R; R; Y; D; R'; U; R'; U'; R; Y'; D'; R; R; Y'; R'; U; R], true
+  | [8;3;2;7;4;5;0;1;6] -> [R'; U'; R; Y; R; R; Y; D; R'; U; R; U'; R; Y'; D'; R; R], true
+  | [8;1;2;7;4;3;0;5;6] -> [R; R; Y'; D'; R; U'; R; U; R'; Y; D; R; R; Y; R; U'; R'], true
+  | [6;7;0;1;4;5;2;3;8] -> [R; U; R'; Y'; R; R; Y'; D'; R; U'; R'; U; R'; Y; D; R; R], true
+  | [0;1;2;5;4;3;8;7;6] -> [R'; U; U; R'; Y; U'; R'; F'; R; R; U'; R'; U; R'; F; R; U'; F], true
+  | [0;3;2;1;4;7;6;5;8] -> m2 @ [U] @ m2 @ [U] @ m' @ u2 @ m2 @ u2 @ m' @ u2, true
+  | [8;3;2;1;4;5;6;7;0] -> [F; R; U'; R'; U'; R; U; R'; F'; R; U; R'; U'; R'; F; R; F'], true
+  | [8;7;2;3;4;5;6;1;0] -> [L; U'; R; U; U; L'; U; R'; L; U'; R; U; U; L'; U; R'; U], true
+  | [0;7;6;3;4;5;2;1;8] -> [R'; U; L'; U; U; R; U'; L; R'; U; L'; U; U; R; U'; L; U'], true
+  | [6;1;8;3;4;5;0;7;2] -> [X'; R; U'; R'; D; R; U; R'; D'; R; U; R'; D; R; U'; R'; D'; X], true
+  | _ -> [], false (* not found *)
 
 let solve_pll (c0:cube) : move list =
   let is_white_center_down = eq_colour (center_of c0 D_face) White in
@@ -104,25 +117,27 @@ let solve_pll (c0:cube) : move list =
   else if is_solved c0 then
     []  (* already solved *)
   else 
-    let rec try_u c i =
+    let rec loop_u c acc_u i =
       if i = 4 then
-        (* steps_pll [0;7;2;5;4;3;6;1;8]  fallback *)
-        failwith "[pll] no PLL case matched" (* check *)
+        failwith "[pll] could not solve PLL: no matching algorithm"
       else
-        let rec try_y c j =
+        let rec loop_y c acc_y j =
           if j = 4 then
-            try_u (apply_move U c) (i+1)
+            (* advance U, carry all Y spins done so far *)
+            let c' = apply_move U c in
+            loop_u c' (acc_u @ acc_y @ [U]) (i+1)
           else
             let sig_ = pll_signature c in
             match steps_pll sig_ with
-            | [] -> try_y (apply_move Y c) (j+1)
-            | ms -> 
-              Printf.printf "signature: [%s]\n"
-                (String.concat "; " (List.map string_of_int sig_));
-              Printf.printf "cube as now:\n%s\n" (string_of_cube c);
-              ms
+            | _, false ->
+                (* try another Y, accumulate it *)
+                let c' = apply_move Y c in
+                loop_y c' (acc_y @ [Y]) (j+1)
+            | ms, true ->
+                (* include the rotations we applied to reach this orientation *)
+                acc_u @ acc_y @ ms
         in
-        try_y (orient_cube_with_white_down c) 0
+        loop_y c [] 0
     in
-    try_u c0 0
+    loop_u c0 [] 0
     |> minimize_moves
