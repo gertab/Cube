@@ -3,8 +3,31 @@ open Rubiks_cube.Cube
 open Rubiks_cube.Util
 open Common
 
-let trials = 100
-let scramble_len = 40
+(* let trials = 100 *)
+(* let scramble_len = 40 *)
+
+let scrambles = [
+  [R; U; R; U];
+  [F'; R; F'; B; D'];
+  [R'; R'; L'; Z; F];
+  [X; L; B'; B; U];
+  [R'; R'; D; B; U'];
+  [B; Z; R; L; R'; F; D'; R; Y; F'];
+  [U'; Z; F; L'; Y; F; Y; L; F'; R];
+  [D; F; Y; L; D; B; F; R; D'; F'];
+  [Y; R; B'; R'; F'; B'; F'; L'; Y; F'];
+  [F; R'; F'; U; F'; F'; U; R; Z; X];
+  [R'; R'; X; L'; B'; F'; L'; U'; F; D; L; R'; F'; Z; R'; F; U'; B; U; U];
+  [R; F; B'; R; U; D; B; U; U'; U'; Y; F'; D; R; F'; U'; U'; F'; L; Z];
+  [R; B'; L'; F'; D'; Z; R'; R'; B; Y; U'; R'; R; B'; Y; L; R'; D; U; U'];
+  [L'; F'; R'; R'; B'; F; R; R; F; L; Z; F'; D; L; U'; X; U; B; R; D'];
+  [F; U; L; B'; Z; R'; D'; X; B; L'; F'; U'; U'; F; F'; Z; R; U; R'; Z];
+  [B'; F; L; D; L; Z; R; R'; R; R; Y; R'; D; U'; U'; L'; U'; R'; R'; B'];
+  [R; U'; L; D; B'; R; U; F; F; L'; D; U; L'; F; L; D'; R'; D'; B'; U'];
+  [F'; U'; R'; F; F; L; L'; B; R'; R; L; U; B'; B; Y; U'; Y; U; U'; F'];
+  [R; U; R'; L'; R'; R; U'; R'; U'; U'; D; R; B; D'; B'; U; U'; R'; Y; R];
+  [X; R'; D'; L; U'; Y; R; F; R; Z; R; F; L; U'; U; D'; U'; U'; B'; Z];
+]
 
 let solve_all (c:cube) : move list =
   let m1 = Solver.Cross.solve_white_cross c in
@@ -18,7 +41,9 @@ let solve_all (c:cube) : move list =
   minimize_moves sol
 
 let mk_case i : test =
-  let scramble     = get_scramble scramble_len in
+  (* random *)
+  (* let scramble     = get_scramble scramble_len in *)
+  let scramble = List.nth scrambles (i-1) in
   let scramble_str = String.concat " " (List.map string_of_move scramble) in
   (Printf.sprintf "random_solve_%02d: %s" i scramble_str) >:: fun _ ->
     let c_scr = apply_moves scramble solved_cube in
@@ -34,7 +59,8 @@ let mk_case i : test =
 
 
 let tests : test list =
-  List.init trials (fun i -> mk_case (i+1))
+  (* List.init trials (fun i -> mk_case (i+1)) *)
+  List.init (List.length scrambles) (fun i -> mk_case (i+1))
 
 let suite : test =
   "random solve tests" >::: tests

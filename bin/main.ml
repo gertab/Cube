@@ -32,24 +32,15 @@ let _cube_1 ={
 
 
 
-(* L L B B L' F F D B' F' *)
-let scramble_moves =  invert_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X]
-(* let inverse_scramble = invert_moves scramble_moves *)
-
-(* let scramble_moves = get_scramble 20 *)
-(* let scramble_moves = [
-F'; U'; B';
-F'; U; F; U'; F; F; Y; Y; F'; U; F; U'; F; F; Y; Y;
-U; U; L'; U'; L; R; U; U; R'; U'; R; U; U; R'; Y; U'; R; U; R'; U; R; U; R'; Y; U'; R; U'; R'; U'; F'; U; F; Y; U; U; R; U'; R'; Y'; U; R'; U; R; Y; Y;
-Y; L; F; R'; F; R; F; F; L'
-] *)
+(* let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F'] *)
+let scramble_moves = [R; U; U; Y]
+(* let scramble_moves =  invert_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X] *)
 
 let _scrambled_cube = apply_moves scramble_moves _cube_1
 (* let _scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
 (* white cross *)
 (* Z; Z; Z; F; R; U'; R'; F'; U; U; F; F; Y; R; F'; U; F; U; U; U; F; F; Y; L; F; U'; F'; L'; U; F; F; Y; B; L; U'; L'; B'; F; F; Y *)
 ] _cube_1 *)
-
 
 let () =
   (* Printf.printf "Start\n%s\n" (string_of_cube _scrambled_cube); *)
@@ -86,11 +77,23 @@ let () = Printf.printf "Moves to solve pll: %s\n"
 
 let () = Printf.printf "Final\n%s\n" (string_of_cube pll)
 
-let () = Printf.printf "Is cross solved? %b\n" (Solver.Cross.is_white_cross_solved pll)
-let () = Printf.printf "Is F2L solved? %b\n" (Solver.F2l.is_f2l_solved pll)
-let () = Printf.printf "Is OLL solved? %b\n" (Solver.Oll.is_oll_solved pll)
-let () = Printf.printf "Is solved? %b\n" (is_solved pll)
+let () = 
+  Printf.printf "Is cross solved? %b\n" (Solver.Cross.is_white_cross_solved pll); 
+  Printf.printf "Is F2L solved? %b\n" (Solver.F2l.is_f2l_solved pll);
+  Printf.printf "Is OLL solved? %b\n" (Solver.Oll.is_oll_solved pll);
+  Printf.printf "Is solved? %b\n" (is_solved pll);
+  Printf.printf "Visualise: %s\n"
+    (twizzle_url 
+       ~scramble:scramble_moves
+       ~cross:moves
+       ~f2l:moves_f2l
+       ~oll:moves_oll
+       ~pll:moves_pll
+    )
 
+
+
+(* visualise solution in https://alpha.twizzle.net/ *)
 
 
 

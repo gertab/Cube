@@ -295,3 +295,49 @@ let is_solved (c:cube) : bool =
     let center = center_of c f in
     List.for_all ((=) center) (stickers_of_face c f)
   ) all_faces
+
+
+(******* Visualise using twizzle.net *******)
+(* Build the multi-line Twizzle alg text. Empty sections are skipped. *)
+let alg_text ~scramble ~cross ~f2l ~oll ~pll : string =
+  let section label ms =
+    if ms = [] then None
+    else
+      Some
+        (Printf.sprintf "%s // %s"
+           (String.concat " " (List.map string_of_move ms))
+           label)
+  in
+  [ 
+    section "scramble"    scramble;
+    section "white cross" cross;
+    section "f2l"         f2l;
+    section "oll"         oll;
+    section "pll"         pll
+  ]
+  |> List.filter_map (fun x -> x)
+  |> String.concat "\n"
+
+(* Simple URL encoder *)
+let url_encode s =
+  let b = Buffer.create (String.length s * 3) in
+  String.iter (function
+    | ' '  -> Buffer.add_char b '+'
+    | '\n' -> Buffer.add_string b "%0A"
+    | '\'' -> Buffer.add_string b "%27"
+    | '/'  -> Buffer.add_string b "%2F"
+    | c when Char.code c < 0x20 || Char.code c >= 0x7F ->
+        Buffer.add_string b (Printf.sprintf "%%%02X" (Char.code c))
+    | c -> Buffer.add_char b c
+  ) s;
+  Buffer.contents b
+
+let twizzle_url ~scramble ~cross ~f2l ~oll ~pll : string =
+  let setup   = [X; X; Y] in (* sets the white on the Down face, red in Front face *)
+  let alg     = alg_text ~scramble ~cross ~f2l ~oll ~pll in
+  let alg_q   = url_encode alg in
+  let setup_q = url_encode (String.concat " " (List.map string_of_move setup))
+  in
+  Printf.sprintf
+    "https://alpha.twizzle.net/edit/?alg=%s&setup-alg=%s"
+    alg_q setup_q
