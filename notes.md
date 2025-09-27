@@ -1,17 +1,19 @@
-notation:
-Singmaster notation 
-faces: top bottom right left front back//// up down
+# Notes
 
-moves:
-only the simple moves: R, L, ... no x, y, l, r, 
+moves notation:
 
-apply_moves:
-certain rotations require reversal of rows, e.g. R (from top to back)
+- standard Singmaster notation,
+- only the simple moves: R, L, ... x, y, x, (no M/S/E or double moves R2, L2,...)
 
+Suggestions to implements:
 
-things todo: 
-to string
-parser from string to cube
-get scramble -- avoid redundant moves, e.g. L L'
-realign cube orientation (white at bottom, red in front)
-the util can be implemented separately
+- face moves/rotation (simple to explain but not trivial & chatgpt struggles with it)
+<!-- certain rotations require reversal of rows, e.g. R (from top to back) -->
+- parser from string to cube/stringify from cube to string
+- locating pieces (edges, corners, centers)
+- rotate cube to a default orientation (e.g. white center at bottom)
+- invert move sequence
+- minimize move sequence
+- is cube solved
+- some solving specific functions: cross solved, first two layers solved, yellow face solved
+- solve cube (using available intermediary solving steps)

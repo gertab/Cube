@@ -1,3 +1,6 @@
+# Cube
+
+Rubik's Cube simulator and solver written in OCaml.
 
 Solving method: CFOP (Cross, First 2 Layers, Orientation, Permutation)
 https://jperm.net/3x3/cfop
