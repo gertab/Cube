@@ -14,3 +14,4 @@ to string
 parser from string to cube
 get scramble -- avoid redundant moves, e.g. L L'
 realign cube orientation (white at bottom, red in front)
+the util can be implemented separately
