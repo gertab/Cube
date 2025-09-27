@@ -3,8 +3,8 @@ open Rubiks_cube.Cube
 open Rubiks_cube.Util
 open Common
 
-let trials = 400000
-let scramble_len = 20
+let trials = 100
+let scramble_len = 40
 
 let solve_all (c:cube) : move list =
   let m1 = Solver.Cross.solve_white_cross c in

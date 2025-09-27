@@ -99,7 +99,7 @@ let string_of_cube (c : cube) : string =
 type move = 
   | U  (* Up clockwise *)
   | U' (* Up counter-clockwise *)
-  | D (* Down/bottom clockwise *)
+  | D  (* Down/bottom clockwise *)
   | D'
   | L
   | L'
@@ -109,11 +109,11 @@ type move =
   | F'
   | B  (* Back clockwise *)
   | B'
-  | X (* rotate whole cube like R *)
+  | X  (* rotate whole cube like R *)
   | X'
-  | Y (* rotate whole cube like U *)
+  | Y  (* rotate whole cube like U *)
   | Y'
-  | Z (* rotate whole cube like F *)
+  | Z  (* rotate whole cube like F *)
   | Z'
 
 let string_of_move : move -> string = function
@@ -129,12 +129,12 @@ let string_of_move : move -> string = function
   | F' -> "F'"
   | B  -> "B"
   | B' -> "B'"
-  | X  -> "X"
-  | X'  -> "X'"
-  | Y  -> "Y"
-  | Y'  -> "Y'"
-  | Z  -> "Z"
-  | Z'  -> "Z'"
+  | X  -> "x" (* WCA notation *)
+  | X' -> "x'"
+  | Y  -> "y"
+  | Y' -> "y'"
+  | Z  -> "z"
+  | Z' -> "z'"
 
 
 let mk_face tl tm tr ml mm mr bl bm br = {
@@ -143,8 +143,8 @@ let mk_face tl tm tr ml mm mr bl bm br = {
   bottom_left = bl; bottom_middle = bm; bottom_right = br;
 }
 
-(* Helpers functions for apply_move *)
 
+(* Helpers functions for apply_move *)
 
 (* Rotate face clockwise *)
 let rotate_face_cw (f: face) : face =
@@ -198,35 +198,6 @@ let mirror_face_twice (f: face) : face =
     f.bottom_right f.bottom_middle f.bottom_left
     f.middle_right f.middle_middle f.middle_left
     f.top_right    f.top_middle    f.top_left
-
-(* A solved cube *)
-let solved_cube = {
-  front = mk_face
-    Red Red Red
-    Red Red Red
-    Red Red Red;
-  back = mk_face
-    Orange Orange Orange
-    Orange Orange Orange
-    Orange Orange Orange;
-  left = mk_face
-    Blue Blue Blue
-    Blue Blue Blue
-    Blue Blue Blue;
-  right = mk_face
-    Green Green Green
-    Green Green Green
-    Green Green Green;
-  up = mk_face
-    Yellow Yellow Yellow
-    Yellow Yellow Yellow
-    Yellow Yellow Yellow;
-  down = mk_face
-    White White White
-    White White White
-    White White White;
-} 
-
 
 (* nice to implement *)
 let rec apply_move (m: move) (c: cube) : cube =

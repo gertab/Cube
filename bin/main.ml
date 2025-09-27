@@ -33,8 +33,8 @@ let _cube_1 ={
 
 
 (* L L B B L' F F D B' F' *)
-let scramble_moves =  inverse_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X]
-(* let inverse_scramble = inverse_moves scramble_moves *)
+let scramble_moves =  invert_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X]
+(* let inverse_scramble = invert_moves scramble_moves *)
 
 (* let scramble_moves = get_scramble 20 *)
 (* let scramble_moves = [

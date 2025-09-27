@@ -1,5 +1,34 @@
 open Cube
 
+(* A solved cube *)
+let solved_cube = {
+  front = mk_face
+    Red Red Red
+    Red Red Red
+    Red Red Red;
+  back = mk_face
+    Orange Orange Orange
+    Orange Orange Orange
+    Orange Orange Orange;
+  left = mk_face
+    Blue Blue Blue
+    Blue Blue Blue
+    Blue Blue Blue;
+  right = mk_face
+    Green Green Green
+    Green Green Green
+    Green Green Green;
+  up = mk_face
+    Yellow Yellow Yellow
+    Yellow Yellow Yellow
+    Yellow Yellow Yellow;
+  down = mk_face
+    White White White
+    White White White
+    White White White;
+} 
+
+(* Returns a scambling move sequence of given length *) 
 let get_scramble (length:int) : move list =
   let () = Random.self_init () in
   let common_moves = [R; R'; U; U'; F; F'] in
@@ -12,7 +41,8 @@ let get_scramble (length:int) : move list =
   in
   loop length []
 
-let inverse_moves (ms:move list) : move list =
+(* Invert a sequence of moves *)
+let invert_moves (ms:move list) : move list =
   let inv m = match m with
     | U -> U' | U' -> U
     | D -> D' | D' -> D
@@ -26,7 +56,9 @@ let inverse_moves (ms:move list) : move list =
   in
   List.rev (List.map inv ms)
 
-let center_of (c:cube) : face_label -> colour = function
+(* Given a cube and a face, return the color of the center sticker of that face *)
+let center_of (c:cube) (fl:face_label) :  colour = 
+  match fl with
   | F_face -> c.front.middle_middle
   | B_face -> c.back.middle_middle
   | L_face -> c.left.middle_middle
@@ -118,19 +150,16 @@ let orient_cube_with_white_down_with_moves (c:cube) : cube * move list =
   let white_face = find_center_facing c White in
   match white_face with
   | D_face -> (c, [])
-  | U_face -> (apply_move X (apply_move X c), [X; X])         (* X2 *)
-  | F_face -> (apply_move X' c,  (* X' = X X X *)
-               [X; X; X])
-  | B_face -> (apply_move X c, [X])                           (* X *)
-  | L_face -> (apply_move Z' c,  (* Z' = Z Z Z *)
-               [Z; Z; Z])
-  | R_face -> (apply_move Z c, [Z])                           (* Z *)
+  | U_face -> (apply_move X (apply_move X c), [X; X]) (* X2 *)
+  | F_face -> (apply_move X' c, [X'])
+  | B_face -> (apply_move X c, [X])
+  | L_face -> (apply_move Z' c, [Z'])
+  | R_face -> (apply_move Z c, [Z])
 
 (* Reorient cube so that white center is Down *)
 let orient_cube_with_white_down (c:cube) : cube =
   orient_cube_with_white_down_with_moves c
   |> fst
-
 
 (* Corner indexing (8 unique corners) *)
 type corner_pos =
@@ -152,6 +181,7 @@ let corner_faces = function
   | DBL -> (D_face, B_face, L_face)
   | DLF -> (D_face, L_face, F_face)
 
+(* Given a cube and a corner, return the colors of its three stickers, aligned with corner_faces order *)
 let corner_colours (c:cube) = function
   | UFR -> (c.up.bottom_right,   c.front.top_right,    c.right.top_left)
   | URB -> (c.up.top_right,      c.right.top_right,    c.back.top_left)
@@ -162,6 +192,7 @@ let corner_colours (c:cube) = function
   | DBL -> (c.down.bottom_left,  c.back.bottom_right,  c.left.bottom_left)
   | DLF -> (c.down.top_left,     c.left.bottom_right,  c.front.bottom_left)
 
+(* Given a cube and three colours, finds the corner with those colours *)
 let find_corner (c:cube) (a:colour) (b:colour) (d:colour) : corner_pos =
   let target = [a; b; d] in
   let same_set xs ys =
@@ -179,7 +210,7 @@ let find_corner_facing (c:cube) (col1:colour) (col2:colour) (col3:colour)
   : face_label * face_label * face_label =
   let pos = find_corner c col1 col2 col3 in
   let (f1,f2,f3) = corner_faces pos in
-  let (c1,c2,c3) = corner_colours c pos in
+  let (c1,c2,c3) = corner_colours c pos in (* the order of (c1,c2,c3) may not match (col1,col2,col3) *)
   (* associate each colour with its face *)
   let pairs = [(c1,f1); (c2,f2); (c3,f3)] in
   let face_of col =
@@ -187,7 +218,7 @@ let find_corner_facing (c:cube) (col1:colour) (col2:colour) (col3:colour)
     | Some (_,f) -> f
     | None -> failwith "colour not found in corner"
   in
-  (face_of col1, face_of col2, face_of col3)
+  (face_of col1, face_of col2, face_of col3) (* the order of the faces matches with the colours requested *)
 
 
 (* Minimizing moves helper functions *)
@@ -208,7 +239,7 @@ let invert = function
    - m m' (or m' m) -> remove
    - m m m m -> remove
    - m m m -> m'
-   (m m stays as-is; no explicit "2" move in the type) *)
+   (m m stays as-is; no we're not supporting the explicit m2 moves) *)
 let simplify_once (ms : move list) : move list =
   let rec step acc = function
     | [] -> List.rev acc
