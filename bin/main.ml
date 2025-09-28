@@ -28,14 +28,18 @@ let _cube_1 ={
     White White White;
 } 
 
+(* let scrambled_cube = parse_cube_string "WOWGYBWYOGYGYBYOGGROWBRGYWRBORWGGYBRBWORORBWBORGOWRYBY"
+let scramble_moves =  invert_moves (Solver.solve_all scrambled_cube)
+let scrambled_cube = apply_moves scramble_moves solved_cube
+let () = Printf.printf "Scrambled cube:\n%s\n" (string_of_cube scrambled_cube) *)
 
 (* let scrambled_cube = parse_cube_string "wowgybwyogygybyoggrowbrgywrborwggybrbwororbwborgowryby"
 let scramble_moves =  invert_moves (Solver.solve_all scrambled_cube)
-let scrambled_cube = apply_moves scramble_moves _cube_1 *)
+let scrambled_cube = apply_moves scramble_moves solved_cube *)
 
 (* let scramble_moves = [R; U; U; Y] *)
 let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F']
-let scrambled_cube = apply_moves scramble_moves _cube_1
+let scrambled_cube = apply_moves scramble_moves solved_cube
 let () = Printf.printf "Scramble moves: %s\n" (String.concat " " (List.map string_of_move scramble_moves))
 
 (* Cross *)

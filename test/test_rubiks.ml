@@ -34,7 +34,8 @@ let scrambled_cubes =
   [
     "YYYYYYYYYBBBBBBBBBRRRRRRRRRGGGGGGGGGOOOOOOOOOWWWWWWWWW";  (* solved *)
     "wowgybwyogygybyoggrowbrgywrborwggybrbwororbwborgowryby";
-    "WOWGYBWYOGYGYBYOGGROWBRGYWRBORWGGYBRBWORORBWBORGOWRYBY"
+    "WOWGYBWYOGYGYBYOGGROWBRGYWRBORWGGYBRBWORORBWBORGOWRYBY";
+    "owbroyyyogbrbwbbbggrwybgowoboroywyrwyoyrgwrgwwgborgryg";  (* orange top, blue front *)
   ]
 
 let mk_case_scramble i : test =

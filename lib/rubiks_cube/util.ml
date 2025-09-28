@@ -161,6 +161,16 @@ let orient_cube_with_white_down (c:cube) : cube =
   orient_cube_with_white_down_with_moves c
   |> fst
 
+let orient_cube_with_white_down_red_front_with_moves (c:cube) : cube * move list =
+  let (c1, moves1) = orient_cube_with_white_down_with_moves c in
+  let red_face = find_center_facing c1 Red in
+  match red_face with
+  | F_face -> (c1, moves1) (* already front *)
+  | B_face -> (apply_move Y (apply_move Y c1), moves1 @ [Y; Y]) (* Y2 *)
+  | L_face -> (apply_move Y' c1, moves1 @ [Y'])
+  | R_face -> (apply_move Y c1, moves1 @ [Y])
+  | U_face | D_face -> failwith "red center cannot be on U or D face"
+
 (* Corner indexing (8 unique corners) *)
 type corner_pos =
   | UFR | URB | UBL | ULF  (* top layer corners *)
@@ -378,4 +388,4 @@ let parse_cube_string (s:string) : cube =
     and right  = face_of_block s 27
     and back  = face_of_block s 36
     and down  = face_of_block s 45 in
-    { up; left; front; right; back; down }
+    { up=up; left=left; front=front; right=right; back=back; down=down }

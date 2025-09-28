@@ -139,5 +139,8 @@ let solve_pll (c0:cube) : move list =
         in
         loop_y c [] 0
     in
-    loop_u c0 [] 0
-    |> minimize_moves
+    let moves = loop_u c0 [] 0 in
+    (* orient to default orientation - useful to sramble a solved cube to a known unsolved configuration *)
+    let (_, orient_moves) = orient_cube_with_white_down_red_front_with_moves (apply_moves moves c0) in
+    let all_moves = moves @ orient_moves in
+    minimize_moves all_moves
