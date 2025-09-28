@@ -114,8 +114,8 @@ let solve_pll (c0:cube) : move list =
     failwith "[pll] cube does not have OLL solved"
   else if not is_white_center_down then
     failwith "[pll] cube not oriented with white center on Down face"
-  else if is_solved c0 then
-    []  (* already solved *)
+  (* else if is_solved c0 then
+    []  already solved *)
   else 
     let rec loop_u c acc_u i =
       if i = 4 then

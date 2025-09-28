@@ -1,16 +1,12 @@
 open OUnit2
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
+open Solver
 open Common
-
-let u2 = [U; U]
-let d2 = [D; D]
-let m  = [X'; R; L']     (* M  = X' R L' *)
-let m' = [L; R'; X]      (* M' = L  R' X *)
-let m2 = m @ m           (* M2 *)
 
 let simple_moves = 
   [
+  ("solved", []);
   ("twisted", [U]);
   ("twisted, further", [U; Y]);
   ("basic", [R'; U; U; R'; Y; U'; R'; F'; R; R; U'; R'; U; R'; F; R; U'; F]); (* simple *)
@@ -53,7 +49,7 @@ let mk_test (name:string) (inv_ms:move list) : test =
   name >:: fun _ ->
     let c1 = apply_moves inv_ms solved_cube in
     let c1' = orient_cube_with_white_down c1 in
-    let sol = Solver.Pll.solve_pll c1' in
+    let sol = Solver.solve_pll c1' in
     let c2 = apply_moves sol c1' in
     assert_bool "PLL should be solved" (is_solved c2)
 

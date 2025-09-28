@@ -290,14 +290,9 @@ let stickers_of_face (c:cube) = function
                c.down.middle_left; c.down.middle_middle; c.down.middle_right;
                c.down.bottom_left; c.down.bottom_middle; c.down.bottom_right]
 
-let is_solved (c:cube) : bool =
-  List.for_all (fun f ->
-    let center = center_of c f in
-    List.for_all ((=) center) (stickers_of_face c f)
-  ) all_faces
-
 
 (******* Visualise using twizzle.net *******)
+
 (* Build the multi-line Twizzle alg text. Empty sections are skipped. *)
 let alg_text ~scramble ~cross ~f2l ~oll ~pll : string =
   let section label ms =
@@ -310,6 +305,7 @@ let alg_text ~scramble ~cross ~f2l ~oll ~pll : string =
   in
   [ 
     section "scramble"    scramble;
+    Some "\n// solution";
     section "white cross" cross;
     section "f2l"         f2l;
     section "oll"         oll;
@@ -341,3 +337,45 @@ let twizzle_url ~scramble ~cross ~f2l ~oll ~pll : string =
   Printf.sprintf
     "https://alpha.twizzle.net/edit/?alg=%s&setup-alg=%s"
     alg_q setup_q
+
+
+
+
+
+(* Parsing string to cube *)
+let face_of_block s off : face =
+  (* y/b/r/g/o/w (case-insensitive) *)
+  let colour_of_char = function
+    | 'Y' | 'y' -> Yellow
+    | 'W' | 'w' -> White
+    | 'R' | 'r' -> Red
+    | 'O' | 'o' -> Orange
+    | 'B' | 'b' -> Blue
+    | 'G' | 'g' -> Green
+    | c -> failwith (Printf.sprintf "parse_cube_string: invalid colour char '%c'" c)
+  in
+  if off + 9 > String.length s then
+    failwith "parse_cube_string: out-of-bounds face block";
+  let c i = colour_of_char s.[off + i] in
+  {
+    top_left      = c 0; top_middle    = c 1; top_right     = c 2;
+    middle_left   = c 3; middle_middle = c 4; middle_right  = c 5;
+    bottom_left   = c 6; bottom_middle = c 7; bottom_right  = c 8;
+  }
+
+(* Parse a 54-char cube string:
+   Order: U(0..8) L(9..17) F(18..26) R(27..35) B(36..44) D(45..53)
+   Example solved cube:
+   "YYYYYYYYYBBBBBBBBBRRRRRRRRRGGGGGGGGGOOOOOOOOOWWWWWWWWW"
+*)
+let parse_cube_string (s:string) : cube =
+  if String.length s <> 54 then
+    failwith (Printf.sprintf "cube should consist of 54 colours, got %d" (String.length s))
+  else 
+    let up    = face_of_block s 0
+    and left = face_of_block s 9
+    and front = face_of_block s 18
+    and right  = face_of_block s 27
+    and back  = face_of_block s 36
+    and down  = face_of_block s 45 in
+    { up; left; front; right; back; down }

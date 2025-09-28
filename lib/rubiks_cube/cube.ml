@@ -21,11 +21,11 @@ type face = {
 }
 
 type cube = {
-  front : face;
-  back  : face;
-  left  : face;
-  right : face;
   up    : face;
+  left  : face;
+  front : face;
+  right : face;
+  back  : face;
   down  : face;
 }
 

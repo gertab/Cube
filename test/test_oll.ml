@@ -3,12 +3,9 @@ open Rubiks_cube.Cube
 open Rubiks_cube.Util
 open Common
 
-let m  = [X'; R; L']   (* M  *)
-let m' = [L; R'; X]    (* M' *)
-let e' = [U'; D; Y]    (* E' *)
-
 let inverse_oll_moves = 
   [
+    ("solved", []);
     ("LBRLURLFR", invert_moves ([R; U; B'; X'; R; U; X; X; R; R; X'; U'; R'; F; R; F']));
     ("LBRLURFFF", invert_moves ([R'; F; R; F'; U; U; R'; F; R; Y'; R; R; U; U; R]));
     ("BBRLURLFU", invert_moves ([Y] @ m @ [U; X; R'; U; U; X'; R; U; L'; U; L] @ m'));
@@ -74,9 +71,9 @@ let mk_test (name:string) (inv_ms:move list) : test =
     let c1 = apply_moves inv_ms solved_cube in
     let c1' = orient_cube_with_white_down c1 in
     (* let c1'' = Solver.F2l.solve_f2l c1' in *)
-    let sol = Solver.Oll.solve_oll c1' in
+    let sol = Solver.solve_oll c1' in
     let c2 = apply_moves sol c1' in
-    assert_bool "OLL should be solved" (Solver.Oll.is_oll_solved c2)
+    assert_bool "OLL should be solved" (Solver.is_oll_solved c2)
 
 (* inverse_oll_moves is your existing [(pattern, invert_moves...)] table *)
 let tests : test list =

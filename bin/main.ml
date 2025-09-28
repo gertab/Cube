@@ -29,47 +29,36 @@ let _cube_1 ={
 } 
 
 
+(* let scrambled_cube = parse_cube_string "wowgybwyogygybyoggrowbrgywrborwggybrbwororbwborgowryby"
+let scramble_moves =  invert_moves (Solver.solve_all scrambled_cube)
+let scrambled_cube = apply_moves scramble_moves _cube_1 *)
 
 (* let scramble_moves = [R; U; U; Y] *)
 let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F']
-(* let scramble_moves =  invert_moves [Y; Y; F; U; R; U'; X'; U; R'; D'; R; U'; R'; X] *)
-
-(* apply scramble *)
 let scrambled_cube = apply_moves scramble_moves _cube_1
-(* let scrambled_cube = apply_moves [L; L; B; B; L'; F; X; F;Y; D; B'; F';
-(* white cross *)
-(* Z; Z; Z; F; R; U'; R'; F'; U; U; F; F; Y; R; F'; U; F; U; U; U; F; F; Y; L; F; U'; F'; L'; U; F; F; Y; B; L; U'; L'; B'; F; F; Y *)
-] _cube_1 *)
+let () = Printf.printf "Scramble moves: %s\n" (String.concat " " (List.map string_of_move scramble_moves))
 
-let () =
-  (* Printf.printf "Start\n%s\n" (string_of_cube scrambled_cube); *)
-  Printf.printf "Scramble moves: %s\n"
-    (String.concat " " (List.map string_of_move scramble_moves))
-
-
-let moves = Solver.Cross.solve_white_cross scrambled_cube
-
+(* Cross *)
+let moves = Solver.solve_white_cross scrambled_cube
 let crossed = apply_moves moves scrambled_cube
-
 let () = Printf.printf "Moves to solve white cross: %s\n"
   (String.concat " " (List.map string_of_move moves))
-(* let () = Printf.printf "white cross solved\n%s\n" (string_of_cube crossed) *)
 
-
-let moves_f2l = Solver.F2l.solve_f2l crossed
+(* F2L *)
+let moves_f2l = Solver.solve_f2l crossed
 let f2l = apply_moves moves_f2l crossed
 let () = Printf.printf "Moves to solve f2l: %s\n"
   (String.concat " " (List.map string_of_move moves_f2l))
 (* let () = Printf.printf "F2L solved\n%s\n" (string_of_cube f2l) *)
 
-let moves_oll = Solver.Oll.solve_oll f2l
+(* OLL *)
+let moves_oll = Solver.solve_oll f2l
 let oll = apply_moves moves_oll f2l
 let () = Printf.printf "Moves to solve oll: %s\n"
   (String.concat " " (List.map string_of_move moves_oll))
-(* let () = Printf.printf "Oll solved\n%s\n" (string_of_cube oll) *)
 
-
-let moves_pll = Solver.Pll.solve_pll oll
+(* OLL *)
+let moves_pll = Solver.solve_pll oll
 let pll = apply_moves moves_pll oll
 let () = Printf.printf "Moves to solve pll: %s\n"
   (String.concat " " (List.map string_of_move moves_pll))
@@ -77,10 +66,10 @@ let () = Printf.printf "Moves to solve pll: %s\n"
 let () = Printf.printf "Final\n%s\n" (string_of_cube pll)
 
 let () = 
-  Printf.printf "Is cross solved? %b\n" (Solver.Cross.is_white_cross_solved pll); 
-  Printf.printf "Is F2L solved? %b\n" (Solver.F2l.is_f2l_solved pll);
-  Printf.printf "Is OLL solved? %b\n" (Solver.Oll.is_oll_solved pll);
-  Printf.printf "Is solved? %b\n" (is_solved pll);
+  Printf.printf "Is cross solved? %b\n" (Solver.is_white_cross_solved pll); 
+  Printf.printf "Is F2L solved? %b\n" (Solver.is_f2l_solved pll);
+  Printf.printf "Is OLL solved? %b\n" (Solver.is_oll_solved pll);
+  Printf.printf "Is solved? %b\n" (Solver.is_solved pll);
   Printf.printf "Visualise: %s\n"
     (twizzle_url 
        ~scramble:scramble_moves
