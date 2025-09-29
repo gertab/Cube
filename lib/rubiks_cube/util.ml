@@ -389,3 +389,25 @@ let parse_cube_string (s:string) : cube =
     and back  = face_of_block s 36
     and down  = face_of_block s 45 in
     { up=up; left=left; front=front; right=right; back=back; down=down }
+
+(* Convert a cube to a 54-char string *)
+let stringify_cube (c:cube) : string =
+  let face_to_string f =
+    String.concat ""
+      [ string_of_colour f.top_left;
+        string_of_colour f.top_middle;
+        string_of_colour f.top_right;
+        string_of_colour f.middle_left;
+        string_of_colour f.middle_middle;
+        string_of_colour f.middle_right;
+        string_of_colour f.bottom_left;
+        string_of_colour f.bottom_middle;
+        string_of_colour f.bottom_right ]
+  in
+  String.concat ""
+    [ face_to_string c.up;
+      face_to_string c.left;
+      face_to_string c.front;
+      face_to_string c.right;
+      face_to_string c.back;
+      face_to_string c.down ]
