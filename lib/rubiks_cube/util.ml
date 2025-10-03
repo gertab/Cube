@@ -69,6 +69,7 @@ let center_of (c:cube) (fl:face_label) :  colour =
 let all_faces = [U_face; D_face; F_face; B_face; L_face; R_face]
 
 (* Edge indexing (12 unique edges) *)
+(* Eg BL is the edge on the Back and Left faces *)
 type edge_pos = 
   | UF | UR | UB | UL (* U layer *)
   | FR | FL | BR | BL (* middle horizontal layer *)
@@ -94,7 +95,7 @@ let edge_faces : edge_pos -> face_label * face_label= function
   | DB -> (D_face, B_face)
   | DL -> (D_face, L_face)
 
-(* Read the two stickers’ colours for an edge, aligned with edge_faces order *)
+(* Read the two stickers' colours for an edge, aligned with edge_faces order *)
 let edge_colours (c:cube) = function
   | UF -> (c.up.bottom_middle,   c.front.top_middle)
   | UR -> (c.up.middle_right,    c.right.top_middle)
@@ -123,7 +124,7 @@ let find_edge_facing (c:cube) (target1:colour) (target2:colour) : (face_label * 
   in
   loop all_edges
 
-(* Where is the (a,b) edge now? *)
+(* Look up edge with colours [a] and [b] *)
 let find_edge_pos (c:cube) (a:colour) (b:colour) : edge_pos =
   let rec loop = function
     | [] -> failwith "edge not found"
