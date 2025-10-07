@@ -32,7 +32,8 @@ let solved_cube = {
 let get_scramble (length:int) : move list =
   let () = Random.self_init () in
   let common_moves = [R; R'; U; U'; F; F'] in
-  let moves = common_moves @ [U; U'; D; D'; L; L'; R; R'; F; F'; B; B'; X; Y; Z] in
+  (* excluded: Y; Y'; Z; Z' *)
+  let moves = common_moves @ [U; U'; D; D'; L; L'; R; R'; F; F'; B; B'; X] in
   let rec loop n acc =
     if n = 0 then List.rev acc
     else

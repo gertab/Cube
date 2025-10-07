@@ -77,7 +77,7 @@ let () =
   Printf.printf "Is OLL solved? %b\n" (Solver.is_oll_solved pll);
   Printf.printf "Is cube solved? %b\n" (Solver.is_solved pll);
   Printf.printf "Visualise: %s\n"
-    (twizzle_url 
+    (visualise 
        ~scramble:scramble_moves
        ~cross:moves
        ~f2l:moves_f2l

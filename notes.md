@@ -5,7 +5,7 @@ moves notation:
 - standard Singmaster notation,
 - only the simple moves: R, L, ... x, y, x, (no M/S/E or double moves R2, L2,...)
 
-Suggestions to implements:
+functional implementations:
 
 - face moves/rotation (simple to explain but not trivial & chatgpt struggles with it)
 <!-- certain rotations require reversal of rows, e.g. R (from top to back) -->
@@ -17,3 +17,9 @@ Suggestions to implements:
 - is cube solved
 - some solving specific functions: cross solved, first two layers solved, yellow face solved
 - solve cube (using available intermediary solving steps)
+
+
+<!--
+open Rubiks_cube.Cube;; 
+open Rubiks_cube.Util;; 
+-->
