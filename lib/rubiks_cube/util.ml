@@ -339,7 +339,7 @@ let url_encode s =
   ) s;
   Buffer.contents b
 
-let twizzle_url ~scramble ~cross ~f2l ~oll ~pll : string =
+let visualise ~scramble ~cross ~f2l ~oll ~pll : string =
   let setup   = [X; X; Y] in (* sets the white on the Down face, red in Front face *)
   let alg     = alg_text ~scramble ~cross ~f2l ~oll ~pll in
   let alg_q   = url_encode alg in
