@@ -5,24 +5,24 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github gertab/Cube))
 
-(authors "Author Name <author@example.com>")
+(authors "gerard <gerardtabone@yahoo.com>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "gerard <gerardtabone@yahoo.com>")
 
-(license LICENSE)
+(license "GPL-3.0-or-later")
 
-(documentation https://url/to/documentation)
+(documentation "https://github.com/gertab/Cube/blob/main/README.md")
 
 (package
  (name rubiks)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Rubik's Cube simulator and CFOP-based solver written in OCaml")
+ (description "This project is a Rubik's Cube simulator and solver implemented natively in OCaml.  It supports defining, scrambling, and solving cubes programmatically, using the CFOP solving method (Cross, F2L, OLL, PLL). The project includes visualisation utilities and can export solutions for use with Twizzle or other cube viewers.")
  (depends 
   (ocaml (>= 5.0.0))
   (ounit2 (>= 2.2.0)))
  (tags
-  ("add topics" "to describe" your project)))
+  ("rubiks-cube" "ocaml" "solver" "cfop" "algorithm" "simulator")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

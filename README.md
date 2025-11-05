@@ -2,7 +2,7 @@
 
 A Rubik’s Cube simulator and solver implemented natively in OCaml.
 
-The solver is inspired by this [project](https://github.com/Wiston999/python) and follows the [CFOP solving method](https://jperm.net/3x3/cfop), which consists of four main stages:
+The solver is inspired by this [project](https://github.com/Wiston999/python-rubik) and follows the [CFOP solving method](https://jperm.net/3x3/cfop), which consists of four main stages:
 
  1. Cross
  2. First Two Layers (F2L)
