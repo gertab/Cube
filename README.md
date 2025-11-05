@@ -17,6 +17,8 @@ To run a built-in example:
 dune exec bin/main.exe
 ```
 
+Alternatively, use `make run`. To install any missing OCaml-related dependencies (e.g. dune), execute `make install`.
+
 ## Defining a Scrambled Cube
 
 See [`bin/main.ml`](bin/main.ml) for an example of how to define and solve a scrambled cube.
@@ -115,4 +117,4 @@ visualise
 
 This generates a Twizzle-compatible URL for interactive 3D visualisation.
 For example, the output for the sample solve is available here:
-[alpha.twizzle.net/edit/?alg=R%27+R%27+U...](https://alpha.twizzle.net/edit/?alg=R%27+R%27+U+R+U+R%27+U%27+R%27+U%27+R%27+U+R%27+y%27+y%27+U+L+U+L%27+y%27+R%27+F+R+U%27+R%27+F%27+R+y%27+y%27+R+U%27+R%27+U%27+R+U%27+R%27+U%27+y%27+F%27+U%27+U%27+F+U%27+F%27+U%27+U%27+F+U%27+B+U%27+B%27+y%27+y%27+R%27+U+R+U%27+R%27+U+R+U%27+U%27+R%27+U+R+y+U%27+y%27+F%27+U%27+U%27+F+U%27+F%27+U%27+F+L%27+U%27+L+y%27+F%27+F%27+U%27+L+F+U+F%27+L%27+y%27+F%27+F%27+U+R%27+F%27+U%27+F+R+y%27+F%27+F%27+U%27+B%27+U%27+B+y%27+F%27+F%27+U%27+U%27+R+U+R%27+F+%2F%2F+scramble%0A%0A%2F%2F+solution%0AF%27+R+U%27+R%27+U+U+F+F+y+B%27+U+B+U+F+F+y+R%27+F%27+U+F+R+U%27+F+F+y+L+F+U%27+F%27+L%27+U+F+F+y+%2F%2F+white+cross%0AL%27+U+L+F%27+U+F+U+F%27+U+U+F+y+U+y%27+R%27+U%27+R+U+U+R%27+U%27+R+U+R%27+U%27+R+y+y+B+U+B%27+U+F%27+U+U+F+U+F%27+U+U+F+y+U+R+U+R%27+U+R+U+R%27+y+%2F%2F+f2l%0Ay+R%27+F+R+U+R%27+F%27+R+y+L+U%27+L%27+%2F%2F+oll%0AU%27+y+y+R+U%27+R+U+R+U+R+U%27+R%27+U%27+R+R+%2F%2F+pll&setup-alg=x+x+y) 
+[alpha.twizzle.net/edit/?alg=R%27+R%27+U...](https://alpha.twizzle.net/edit/?alg=R%27+R%27+U+R+U+R%27+U%27+R%27+U%27+R%27+U+R%27+y%27+y%27+U+L+U+L%27+y%27+R%27+F+R+U%27+R%27+F%27+R+y%27+y%27+R+U%27+R%27+U%27+R+U%27+R%27+U%27+y%27+F%27+U%27+U%27+F+U%27+F%27+U%27+U%27+F+U%27+B+U%27+B%27+y%27+y%27+R%27+U+R+U%27+R%27+U+R+U%27+U%27+R%27+U+R+y+U%27+y%27+F%27+U%27+U%27+F+U%27+F%27+U%27+F+L%27+U%27+L+y%27+F%27+F%27+U%27+L+F+U+F%27+L%27+y%27+F%27+F%27+U+R%27+F%27+U%27+F+R+y%27+F%27+F%27+U%27+B%27+U%27+B+y%27+F%27+F%27+U%27+U%27+R+U+R%27+F+%2F%2F+scramble%0A%0A%2F%2F+solution%0AF%27+R+U%27+R%27+U+U+F+F+y+B%27+U+B+U+F+F+y+R%27+F%27+U+F+R+U%27+F+F+y+L+F+U%27+F%27+L%27+U+F+F+y+%2F%2F+white+cross%0AL%27+U+L+F%27+U+F+U+F%27+U+U+F+y+U+y%27+R%27+U%27+R+U+U+R%27+U%27+R+U+R%27+U%27+R+y+y+B+U+B%27+U+F%27+U+U+F+U+F%27+U+U+F+y+U+R+U+R%27+U+R+U+R%27+y+%2F%2F+f2l%0Ay+R%27+F+R+U+R%27+F%27+R+y+L+U%27+L%27+%2F%2F+oll%0AU%27+y+y+R+U%27+R+U+R+U+R+U%27+R%27+U%27+R+R+%2F%2F+pll&setup-alg=x+x+y)
