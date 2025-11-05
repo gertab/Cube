@@ -1,69 +1,50 @@
 open Rubiks_cube.Cube
 open Rubiks_cube.Util
 
-let _cube_1 = {
-  front = mk_face
-    Red Red Red
-    Red Red Red
-    Red Red Red;
-  back = mk_face
-    Orange Orange Orange
-    Orange Orange Orange
-    Orange Orange Orange;
-  left = mk_face
-    Blue Blue Blue
-    Blue Blue Blue
-    Blue Blue Blue;
-  right = mk_face
-    Green Green Green
-    Green Green Green
-    Green Green Green;
-  up = mk_face
-    Yellow Yellow Yellow
-    Yellow Yellow Yellow
-    Yellow Yellow Yellow;
-  down = mk_face
-    White White White
-    White White White
-    White White White;
-} 
-
-(* let scrambled_cube = parse_cube_string "WOWGYBWYOGYGYBYOGGROWBRGYWRBORWGGYBRBWORORBWBORGOWRYBY"
-let scramble_moves =  invert_moves (Solver.solve_all scrambled_cube)
-(* let scrambled_cube = apply_moves scramble_moves solved_cube *)
-let () = Printf.printf "Scrambled cube:\n%s\n" (string_of_cube scrambled_cube) *)
-
-(* OLL cases: pattern string, and moves to reach solved cube from that pattern *)
-
+(* Start from a scrambled cube *)
+(*          ----------
+           |  1  2  3 |
+           |  4  5  6 |
+           |  7  8  9 |
+ ---------- ---------- ---------- ----------
+| 10 11 12 | 19 20 21 | 28 29 30 | 37 38 39 |
+| 13 14 15 | 22 23 25 | 31 32 33 | 40 41 42 |
+| 16 17 18 | 25 26 27 | 34 35 36 | 43 44 45 |
+ ---------- ---------- ---------- ----------
+           | 46 47 48 |
+           | 49 50 51 |
+           | 52 53 54 |
+            ----------  *)
 let scrambled_cube = parse_cube_string "wowgybwyogygybyoggrowbrgywrborwggybrbwororbwborgowryby"
-let scramble_moves =  invert_moves (Solver.solve_all scrambled_cube)
-let scrambled_cube = apply_moves scramble_moves solved_cube
+let scramble_moves = invert_moves (Solver.solve_all scrambled_cube)
 
-(* let scramble_moves = [R; U; U; Y] *)
-(* let scramble_moves = [L; L; B; B; L'; F; F; D; B'; F']
-let scrambled_cube = apply_moves scramble_moves solved_cube
-let () = Printf.printf "Scramble moves: %s\n" (String.concat " " (List.map string_of_move scramble_moves)) *)
 
-(* Cross *)
+(* Alternative: provide the scramble moves *)
+let _scramble_moves = [L; L; B; B; L'; F; F; D; B'; F']
+let _scrambled_cube_2 = apply_moves _scramble_moves solved_cube
+let () = Printf.printf "Scramble moves: %s\n" (String.concat " " (List.map string_of_move scramble_moves))
+
+
+(* Solve the Cross *)
 let moves = Solver.solve_white_cross scrambled_cube
 let crossed = apply_moves moves scrambled_cube
 let () = Printf.printf "Moves to solve white cross: %s\n"
   (String.concat " " (List.map string_of_move moves))
 
-(* F2L *)
+(* Solve the First 2 Layers *)
 let moves_f2l = Solver.solve_f2l crossed
 let f2l = apply_moves moves_f2l crossed
 let () = Printf.printf "Moves to solve f2l: %s\n"
   (String.concat " " (List.map string_of_move moves_f2l))
 (* let () = Printf.printf "F2L solved\n%s\n" (string_of_cube f2l) *)
 
-(* OLL *)
+(* Orient the Last Layer (OLL) *)
 let moves_oll = Solver.solve_oll f2l
 let oll = apply_moves moves_oll f2l
 let () = Printf.printf "Moves to solve oll: %s\n"
   (String.concat " " (List.map string_of_move moves_oll))
 
-(* OLL *)
+(* Permutate the Last Layer (PLL) *)
 let moves_pll = Solver.solve_pll oll
 let pll = apply_moves moves_pll oll
 let () = Printf.printf "Moves to solve pll: %s\n"
@@ -86,28 +67,4 @@ let () =
     )
 
 
-
 (* visualise solution in https://alpha.twizzle.net/ *)
-
-
-
-(* crossed now has the white cross on Down, with side colours matched to their centers *)
-
-(* given your apply_move / apply_moves *)
-(* let cross_moves = Solve.solve_white_cross scrambled_cube *)
-
-(* let () = Printf.printf "Moves to solve white cross: %s\n"
-  (String.concat " " (List.map string_of_move cross_moves))
-let crossed = apply_moves scrambled_cube cross_moves *)
-
-(* pretty-print to check *)
-(* let () =
-  Printf.printf "%s\n" (string_of_cube (crossed)) *)
-
-
-(* let () =
-  Printf.printf "%s\n" (string_of_cube (apply_moves solved_cube [L; L; B; B; L'; F; F; D; B'; F'; D'; X; Y; Z; ]))
-   *)
-
-
-(* let () = Printf.printf "The answer is: %s\n" () *)

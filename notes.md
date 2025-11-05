@@ -19,7 +19,4 @@ functional implementations:
 - solve cube (using available intermediary solving steps)
 
 
-<!--
-open Rubiks_cube.Cube;; 
-open Rubiks_cube.Util;; 
--->
+
